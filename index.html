@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Social</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+window.addEventListener('DOMContentLoaded', () => {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    const saved = localStorage.getItem(f.id);
+    if (saved !== null) f.value = saved;
+  });
+});
+
+function exportWord() {
+  const html = document.getElementById('preview').innerHTML;
+  const lines = html.split(/<p[^>]*>|<\/p>/).filter(l => l.trim() !== '');
+  const paragraphs = lines.map(line => {
+    const runs = [];
+    let match, lastIndex = 0;
+    const regex = /<b>(.*?)<\/b>/g;
+    while ((match = regex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
+        if (plain) runs.push(new docx.TextRun(plain));
+      }
+      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < line.length) {
+      const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
+      if (tail) runs.push(new docx.TextRun(tail));
+    }
+    return new docx.Paragraph({ children: runs });
+  });
+
+  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
+  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+}
+
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js">
+window.addEventListener('DOMContentLoaded', () => {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    const saved = localStorage.getItem(f.id);
+    if (saved !== null) f.value = saved;
+  });
+});
+
+function exportWord() {
+  const html = document.getElementById('preview').innerHTML;
+  const lines = html.split(/<p[^>]*>|<\/p>/).filter(l => l.trim() !== '');
+  const paragraphs = lines.map(line => {
+    const runs = [];
+    let match, lastIndex = 0;
+    const regex = /<b>(.*?)<\/b>/g;
+    while ((match = regex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
+        if (plain) runs.push(new docx.TextRun(plain));
+      }
+      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < line.length) {
+      const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
+      if (tail) runs.push(new docx.TextRun(tail));
+    }
+    return new docx.Paragraph({ children: runs });
+  });
+
+  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
+  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+}
+
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.7.0/docx.umd.min.js">
+window.addEventListener('DOMContentLoaded', () => {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    const saved = localStorage.getItem(f.id);
+    if (saved !== null) f.value = saved;
+  });
+});
+
+function exportWord() {
+  const html = document.getElementById('preview').innerHTML;
+  const lines = html.split(/<p[^>]*>|<\/p>/).filter(l => l.trim() !== '');
+  const paragraphs = lines.map(line => {
+    const runs = [];
+    let match, lastIndex = 0;
+    const regex = /<b>(.*?)<\/b>/g;
+    while ((match = regex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
+        if (plain) runs.push(new docx.TextRun(plain));
+      }
+      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < line.length) {
+      const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
+      if (tail) runs.push(new docx.TextRun(tail));
+    }
+    return new docx.Paragraph({ children: runs });
+  });
+
+  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
+  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+}
+
+</script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
+    .btn { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    .preview { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; margin-top: 20px; background: #f9f9f9; }
+    .container { max-width: 800px; margin: auto; }
+
+    .rosso { color: red; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Report Social</h1>
+  <input id="mese" placeholder="Mese" />
+  <input id="iscritti" placeholder="Numero complessivo iscritti" />
+  <input id="facebook" placeholder="Iscritti Facebook" />
+  <input id="twitter" placeholder="Iscritti Twitter" />
+  <input id="linkedin" placeholder="Iscritti LinkedIn" />
+  <input id="instagram" placeholder="Iscritti Instagram" />
+  <input id="youtube" placeholder="Iscritti YouTube" />
+  <input id="totalePost" placeholder="Totale post" />
+  <input id="postEditoriali" placeholder="Post editoriali" />
+  <input id="postADV" placeholder="Post ADV" />
+  <input id="postFacebook" placeholder="Post Facebook" />
+  <input id="postInstagram" placeholder="Post Instagram" />
+  <input id="postLinkedin" placeholder="Post LinkedIn" />
+  <input id="tweet" placeholder="Tweet" />
+  <input id="videoYoutube" placeholder="Video YouTube" />
+  <input id="titolo1" placeholder="Titolo contenuto 1" />
+  <input id="vis1" placeholder="Visualizzazioni 1" />
+  <input id="titolo2" placeholder="Titolo contenuto 2" />
+  <input id="vis2" placeholder="Visualizzazioni 2" />
+  <input id="titolo3" placeholder="Titolo contenuto 3" />
+  <input id="vis3" placeholder="Visualizzazioni 3" />
+  <input id="postIstituzionali" placeholder="Post Istituzionali" />
+  <input id="viewsIstituzionali" placeholder="Views istituzionali" />
+  <input id="interazioniIstituzionali" placeholder="Interazioni istituzionali" />
+  <input id="campagneATL" placeholder="Campagne ATL" />
+  <textarea id="elencoCampagne" rows="3" placeholder="Elenco campagne"></textarea>
+  <input id="viewsATL" placeholder="Views ATL" />
+  <input id="utentiATL" placeholder="Utenti Unici ATL" />
+  <input id="clickATL" placeholder="Link click ATL" />
+  <input id="interazioniATL" placeholder="Interazioni ATL" />
+  <input id="commenti" placeholder="Commenti complessivi" />
+  <input id="tendenzaCommenti" placeholder="Tendenza commenti" />
+  <input id="argomentiFacebook" placeholder="Argomenti prevalenti Facebook" />
+  <input id="prevalenzaCommenti" placeholder="Prevalenza Commenti" />
+  <div>
+    <button class="btn" onclick="generaAnteprima()">Salva</button>
+    <button class="btn" onclick="exportWord()">Esporta Word</button>
+    <button class="btn" onclick="exportExcel()">Esporta Excel</button>
+    <button class="btn" onclick="document.getElementById('fileImport').click()">Importa Excel</button>
+    <input type="file" id="fileImport" style="display:none" onchange="importExcel(event)" />
+  </div>
+  <div class="preview" id="preview"></div>
+</div>
+
+<script>
+const get = id => document.getElementById(id).value || '<span class="rosso">XXX</span>';
+function formatWithBold(text) {
+  return text.replace(/\*(.*?)\*/g, '<b>$1</b>');
+}
+function parseDocxFormattedText(text) {
+  const parts = [];
+  let match, lastIndex = 0;
+  const regex = /\*(.*?)\*/g;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(new docx.TextRun(text.substring(lastIndex, match.index)));
+    parts.push(new docx.TextRun({ text: match[1], bold: true }));
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) parts.push(new docx.TextRun(text.substring(lastIndex)));
+  return parts;
+}
+function generaAnteprima() {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => localStorage.setItem(f.id, f.value));
+
+  const ppt1 = `*Emesso il Report social di ${get('mese')}*: ${get('iscritti')} iscritti totali; ${get('totalePost')} post pubblicati di cui ${get('postIstituzionali')} su temi istituzionali; ${get('campagneATL')} campagne ATL; ${get('commenti')} commenti.`;
+  const ppt2 = `Il numero complessivo degli iscritti è pari a ${get('iscritti')}: Facebook ${get('facebook')}; X ${get('twitter')}; Linkedin ${get('linkedin')}; Instagram ${get('instagram')}; YouTube ${get('youtube')}.
+Durante il mese abbiamo pubblicato ${get('totalePost')} post (${get('postEditoriali')} editoriali e ${get('postADV')} sponsorizzati): ${get('postFacebook')} post Facebook, ${get('postInstagram')} post Instagram, ${get('postLinkedin')} post Linkedin, ${get('tweet')} tweet, ${get('videoYoutube')} video YouTube, ${get('postADV')} post relativi alle campagne ADV (Facebook e Instagram).
+I contenuti editoriali più visualizzati sono stati i post dedicati a: ${get('titolo1')} (${get('vis1')} Visualizzazioni); ${get('titolo2')} (${get('vis2')} Visualizzazioni); ${get('titolo3')} (${get('vis3')} Visualizzazioni).
+Sono stati pubblicati ${get('postIstituzionali')} post a contenuto «istituzionale» che hanno generato ${get('viewsIstituzionali')} visualizzazioni e ${get('interazioniIstituzionali')} like e interazioni.
+Nel corso del mese sono state gestite ${get('campagneATL')} campagne ATL che hanno sviluppato complessivamente ${get('viewsATL')} di impression, raggiunto ${get('utentiATL')} utenti unici e generato un engagement per ${get('clickATL')} link click e ${get('interazioniATL')} interazioni.
+Nel mese gli utenti hanno pubblicato ${get('commenti')} commenti ai post. I commenti hanno riguardato, in prevalenza, i “${get('argomentiFacebook')}” (${get('prevalenzaCommenti')}).`;
+  const esteso = `In allegato il report social del mese di *${get('mese')}*.
+
+Il numero complessivo degli *iscritti* è pari a *${get('iscritti')}*.
+
+I fan Facebook (Poste Italiane, PosteMobile Postepay) sono, in totale, *${get('facebook')}* mentre su X il numero dei follower ammonta a *${get('twitter')}*. Su Linkedin sono *${get('linkedin')}*, su Instagram *${get('instagram')}* e su YouTube *${get('youtube')}*.
+
+Durante il mese abbiamo pubblicato *${get('totalePost')} post* (*${get('postEditoriali')} editoriali e ${get('postADV')} sponsorizzati*):
+• ${get('postFacebook')} post Facebook
+• ${get('postInstagram')} post Instagram
+• ${get('postLinkedin')} post LinkedIn
+• ${get('tweet')} tweet
+• ${get('videoYoutube')} video YouTube
+• ${get('postADV')} post relativi alle campagne ADV (Facebook e Instagram)
+
+I contenuti editoriali più visualizzati sono stati i post:
+• *${get('titolo1')}* (${get('vis1')} Visualizzazioni)
+• *${get('titolo2')}* (${get('vis2')} Visualizzazioni)
+• *${get('titolo3')}* (${get('vis3')} Visualizzazioni)
+
+L’attività di *comunicazione istituzionale* ha portato alla pubblicazione di *${get('postIstituzionali')} post* che hanno generato *${get('viewsIstituzionali')} visualizzazioni* e *${get('interazioniIstituzionali')} like e interazioni*.
+
+Nel corso del mese sono state gestite *${get('campagneATL')} campagne ATL* (Facebook e Instagram): *${get('elencoCampagne')}*.
+
+Le campagne hanno sviluppato complessivamente:
+• *${get('viewsATL')} impression*
+• *${get('utentiATL')} utenti unici*
+e generato engagement per *${get('clickATL')} link click* e *${get('interazioniATL')} interazioni*.
+
+Nel mese si registrano *${get('commenti')} commenti pubblici* sui canali, ${get('tendenzaCommenti')}. I commenti sulla pagina Facebook di Poste hanno riguardato, in prevalenza, *“${get('argomentiFacebook')}”* (*${get('prevalenzaCommenti')}*).`;
+  document.getElementById('preview').innerHTML = ['<p><b>PPT1</b></p>', '<p>' + formatWithBold(ppt1) + '</p>', '<p><b>PPT2</b></p>', '<p>' + formatWithBold(ppt2) + '</p>', '<p><b>Esteso</b></p>', '<p>' + formatWithBold(esteso) + '</p>'].join('');
+}
+function exportWord() {
+  const p = document.getElementById('preview').innerHTML.replace(/<br>/g, '\n').replace(/<\/?.*?>/g, '');
+  const doc = new docx.Document({ sections: [{ children: [new docx.Paragraph({ children: parseDocxFormattedText(p) })] }] });
+  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+}
+function exportExcel() {
+  const fields = document.querySelectorAll('input, textarea');
+  const data = Array.from(fields).map(f => [f.id, f.value]);
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, "Report");
+  XLSX.writeFile(wb, "report_social.xlsx");
+}
+function importExcel(e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const wb = XLSX.read(evt.target.result, { type: 'binary' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+    rows.forEach(([key, val]) => {
+      const el = document.getElementById(key);
+      if (el) el.value = val;
+    });
+  };
+  reader.readAsBinaryString(file);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    const saved = localStorage.getItem(f.id);
+    if (saved !== null) f.value = saved;
+  });
+});
+
+function exportWord() {
+  const html = document.getElementById('preview').innerHTML;
+  const lines = html.split(/<p[^>]*>|<\/p>/).filter(l => l.trim() !== '');
+  const paragraphs = lines.map(line => {
+    const runs = [];
+    let match, lastIndex = 0;
+    const regex = /<b>(.*?)<\/b>/g;
+    while ((match = regex.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
+        if (plain) runs.push(new docx.TextRun(plain));
+      }
+      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < line.length) {
+      const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
+      if (tail) runs.push(new docx.TextRun(tail));
+    }
+    return new docx.Paragraph({ children: runs });
+  });
+
+  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
+  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+}
+
+</script>
+</body>
+</html>
