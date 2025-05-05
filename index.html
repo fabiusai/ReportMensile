@@ -22,20 +22,20 @@ function exportWord() {
     while ((match = regex.exec(line)) !== null) {
       if (match.index > lastIndex) {
         const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
-        if (plain) runs.push(new docx.TextRun(plain));
+        if (plain) runs.push(new window.docx.TextRun(plain));
       }
-      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      runs.push(new window.docx.TextRun({ text: match[1], bold: true }));
       lastIndex = regex.lastIndex;
     }
     if (lastIndex < line.length) {
       const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
-      if (tail) runs.push(new docx.TextRun(tail));
+      if (tail) runs.push(new window.docx.TextRun(tail));
     }
-    return new docx.Paragraph({ children: runs });
+    return new window.docx.Paragraph({ children: runs });
   });
 
-  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
-  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+  const doc = new window.docx.Document({ sections: [{ children: paragraphs }] });
+  window.docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
 }
 
 </script>
@@ -58,20 +58,20 @@ function exportWord() {
     while ((match = regex.exec(line)) !== null) {
       if (match.index > lastIndex) {
         const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
-        if (plain) runs.push(new docx.TextRun(plain));
+        if (plain) runs.push(new window.docx.TextRun(plain));
       }
-      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      runs.push(new window.docx.TextRun({ text: match[1], bold: true }));
       lastIndex = regex.lastIndex;
     }
     if (lastIndex < line.length) {
       const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
-      if (tail) runs.push(new docx.TextRun(tail));
+      if (tail) runs.push(new window.docx.TextRun(tail));
     }
-    return new docx.Paragraph({ children: runs });
+    return new window.docx.Paragraph({ children: runs });
   });
 
-  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
-  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+  const doc = new window.docx.Document({ sections: [{ children: paragraphs }] });
+  window.docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
 }
 
 </script>
@@ -94,20 +94,20 @@ function exportWord() {
     while ((match = regex.exec(line)) !== null) {
       if (match.index > lastIndex) {
         const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
-        if (plain) runs.push(new docx.TextRun(plain));
+        if (plain) runs.push(new window.docx.TextRun(plain));
       }
-      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      runs.push(new window.docx.TextRun({ text: match[1], bold: true }));
       lastIndex = regex.lastIndex;
     }
     if (lastIndex < line.length) {
       const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
-      if (tail) runs.push(new docx.TextRun(tail));
+      if (tail) runs.push(new window.docx.TextRun(tail));
     }
-    return new docx.Paragraph({ children: runs });
+    return new window.docx.Paragraph({ children: runs });
   });
 
-  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
-  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+  const doc = new window.docx.Document({ sections: [{ children: paragraphs }] });
+  window.docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
 }
 
 </script>
@@ -117,7 +117,7 @@ function exportWord() {
     .btn { margin: 5px; padding: 10px 15px; cursor: pointer; }
     .preview { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; margin-top: 20px; background: #f9f9f9; }
     .container { max-width: 800px; margin: auto; }
-
+  
     .rosso { color: red; font-weight: bold; }
 </style>
 </head>
@@ -228,7 +228,7 @@ Nel mese si registrano *${get('commenti')} commenti pubblici* sui canali, ${get(
   document.getElementById('preview').innerHTML = ['<p><b>PPT1</b></p>', '<p>' + formatWithBold(ppt1) + '</p>', '<p><b>PPT2</b></p>', '<p>' + formatWithBold(ppt2) + '</p>', '<p><b>Esteso</b></p>', '<p>' + formatWithBold(esteso) + '</p>'].join('');
 }
 function exportWord() {
-  const p = document.getElementById('preview').innerHTML.replace(/<br>/g, '\n').replace(/<\/?.*?>/g, '');
+  const p = document.getElementById('preview').innerText;
   const doc = new docx.Document({ sections: [{ children: [new docx.Paragraph({ children: parseDocxFormattedText(p) })] }] });
   docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
 }
@@ -272,20 +272,20 @@ function exportWord() {
     while ((match = regex.exec(line)) !== null) {
       if (match.index > lastIndex) {
         const plain = line.substring(lastIndex, match.index).replace(/<[^>]+>/g, '');
-        if (plain) runs.push(new docx.TextRun(plain));
+        if (plain) runs.push(new window.docx.TextRun(plain));
       }
-      runs.push(new docx.TextRun({ text: match[1], bold: true }));
+      runs.push(new window.docx.TextRun({ text: match[1], bold: true }));
       lastIndex = regex.lastIndex;
     }
     if (lastIndex < line.length) {
       const tail = line.substring(lastIndex).replace(/<[^>]+>/g, '');
-      if (tail) runs.push(new docx.TextRun(tail));
+      if (tail) runs.push(new window.docx.TextRun(tail));
     }
-    return new docx.Paragraph({ children: runs });
+    return new window.docx.Paragraph({ children: runs });
   });
 
-  const doc = new docx.Document({ sections: [{ children: paragraphs }] });
-  docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
+  const doc = new window.docx.Document({ sections: [{ children: paragraphs }] });
+  window.docx.Packer.toBlob(doc).then(blob => saveAs(blob, `report_social_${get('mese')}.docx`));
 }
 
 </script>
