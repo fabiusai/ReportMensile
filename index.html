@@ -2,187 +2,183 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Report mensile: sintesi Visualizzazioni e Interazioni</title>
-  <link rel="icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Report Social</title>
+ <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <style>
-    :root {
-      --blue: #005eb8;
-      --yellow: #edda30;
-      --gray-light: #f5f5f5;
-      --white: #ffffff;
-      --text-dark: #333333;
-      --border-radius: 8px;
-      --shadow: rgba(0,0,0,0.1);
-      --transition: 0.3s;
-    }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:'Roboto',sans-serif; background:var(--gray-light); color:var(--text-dark);}
-    .container {max-width:900px;margin:20px auto;padding:20px;background:var(--white);border-radius:var(--border-radius);box-shadow:0 4px 12px var(--shadow);}
-    h1 {text-align:center;color:var(--blue);font-weight:500;margin:0;}
-    .header-banner {background:var(--yellow);padding:20px;border-radius:var(--border-radius);margin-bottom:24px;text-align:center;}
-    .header-banner h1 {margin:0;font-size:1.5em;}
-    .section {margin-top:30px;}
-    .section-title {padding-bottom:4px;font-size:1.2em;font-weight:500;color:var(--text-dark);border-bottom:2px solid var(--blue);margin-bottom:16px;}
-    .file-btn {background:var(--yellow);color:var(--text-dark);padding:8px 16px;border:none;border-radius:var(--border-radius);cursor:pointer;transition:background var(--transition);font-weight:500;display:inline-block;}
-    .file-btn:hover {background:#e0c72a;}
-    .file-btn input {display:none;}
-    .subsection {background:var(--white);padding:16px;border-radius:var(--border-radius);box-shadow:0 2px 8px var(--shadow);margin-bottom:20px;}
-    .titoletto {display:flex;justify-content:space-between;align-items:center;background:var(--gray-light);padding:8px;border-radius:var(--border-radius);margin-bottom:8px;color:var(--blue);font-weight:500;}
-    .data-table {width:100%;border-collapse:collapse;margin-top:8px;}
-    .data-table th,.data-table td {border:1px solid #ddd;padding:8px;font-size:0.95em;}
-    .data-table th {background:var(--gray-light);}
-    .data-table td:nth-child(2) {text-align:right;} /* Allineamento a destra */
-    .copy-icon {position:relative;cursor:pointer;font-family:'Material Icons';font-size:20px;color:var(--blue);}
-    .tooltip {position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:var(--blue);color:var(--white);padding:4px 8px;border-radius:var(--border-radius);font-family:'Roboto',sans-serif;font-size:0.8em;opacity:0;transition:opacity var(--transition);pointer-events:none;white-space:nowrap;}
-    .tooltip.show {opacity:1;}
-    .controls {margin-bottom:16px;}
-    .flat-select {background:var(--yellow);padding:8px 12px;border:none;border-radius:var(--border-radius);font-weight:500;cursor:pointer;}
-    .flat-select select {background:transparent;border:none;font:inherit;color:var(--text-dark);outline:none;cursor:pointer;}
-    .panels {display:flex;gap:20px;}
-    .panel {flex:1;}
+    body { font-family: Arial; padding: 20px; }
+    input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
+    .btn { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    .preview { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; margin-top: 20px; background: #f9f9f9; }
+    .container { max-width: 800px; margin: auto; }
+    .rosso { color: red; font-weight: bold; }
+    .copy-btn { margin-left: 10px; font-size: 0.8em; }
+    .section { margin-top: 30px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header-banner"><h1>Report mensile: sintesi Visualizzazioni e Interazioni</h1></div>
+<div class="container">
+  <h1>Report Social</h1>
 
-    <!-- SEZIONE 1 -->
-    <div class="section" id="section1">
-      <div class="section-title">Caricamento file Excel</div>
-      <label class="file-btn">Sfoglia file<input type="file" id="fileInput" accept=".xlsx"></label>
-    </div>
+  <!-- Inserimento completo dei campi -->
+  <input id="mese" placeholder="Mese" />
+  <input id="iscritti" placeholder="Numero complessivo iscritti" />
+  <input id="facebook" placeholder="Iscritti Facebook" />
+  <input id="twitter" placeholder="Iscritti Twitter" />
+  <input id="linkedin" placeholder="Iscritti LinkedIn" />
+  <input id="instagram" placeholder="Iscritti Instagram" />
+  <input id="youtube" placeholder="Iscritti YouTube" />
+  <input id="totalePost" placeholder="Totale post" />
+  <input id="postEditoriali" placeholder="Post editoriali" />
+  <input id="postADV" placeholder="Post ADV" />
+  <input id="postFacebook" placeholder="Post Facebook" />
+  <input id="postInstagram" placeholder="Post Instagram" />
+  <input id="postLinkedin" placeholder="Post LinkedIn" />
+  <input id="tweet" placeholder="Tweet" />
+  <input id="videoYoutube" placeholder="Video YouTube" />
+  <input id="titolo1" placeholder="Titolo contenuto 1" />
+  <input id="vis1" placeholder="Visualizzazioni 1" />
+  <input id="titolo2" placeholder="Titolo contenuto 2" />
+  <input id="vis2" placeholder="Visualizzazioni 2" />
+  <input id="titolo3" placeholder="Titolo contenuto 3" />
+  <input id="vis3" placeholder="Visualizzazioni 3" />
+  <input id="postIstituzionali" placeholder="Post Istituzionali" />
+  <input id="viewsIstituzionali" placeholder="Views istituzionali" />
+  <input id="interazioniIstituzionali" placeholder="Interazioni istituzionali" />
+  <input id="campagneATL" placeholder="Campagne ATL" />
+  <textarea id="elencoCampagne" rows="3" placeholder="Elenco campagne"></textarea>
+  <input id="viewsATL" placeholder="Views ATL" />
+  <input id="utentiATL" placeholder="Utenti Unici ATL" />
+  <input id="clickATL" placeholder="Link click ATL" />
+  <input id="interazioniATL" placeholder="Interazioni ATL" />
+  <input id="commenti" placeholder="Commenti complessivi" />
+  <input id="tendenzaCommenti" placeholder="Tendenza commenti" />
+  <input id="argomentiFacebook" placeholder="Argomenti prevalenti Facebook" />
+  <input id="prevalenzaCommenti" placeholder="Prevalenza Commenti" />
 
-    <!-- SEZIONE 2 -->
-    <div class="section" id="section2">
-      <div class="section-title">Dati elaborati per label</div>
-      <div class="subsection" id="labelVis">
-        <div class="titoletto">Visualizzazioni totali: <strong id="formattedVis"></strong><span class="copy-icon" data-copy="visTotal">content_copy<span class="tooltip">Copiato!</span></span></div>
-        <div class="titoletto">Visualizzazioni per label<span class="copy-icon" data-copy="visTable">content_copy<span class="tooltip">Copiato!</span></span></div>
-        <table class="data-table" id="tableLabelVis"><thead><tr><th>Label</th><th>Visualizzazioni</th></tr></thead><tbody></tbody></table>
-      </div>
-      <div class="subsection" id="labelInter">
-        <div class="titoletto">Interazioni totali: <strong id="formattedInter"></strong><span class="copy-icon" data-copy="interTotal">content_copy<span class="tooltip">Copiato!</span></span></div>
-        <div class="titoletto">Interazioni per label<span class="copy-icon" data-copy="interTable">content_copy<span class="tooltip">Copiato!</span></span></div>
-        <table class="data-table" id="tableLabelInter"><thead><tr><th>Label</th><th>Interazioni</th></tr></thead><tbody></tbody></table>
-      </div>
-    </div>
-
-    <!-- SEZIONE 3 -->
-    <div class="section" id="section3">
-      <div class="section-title">Dati elaborati per singoli canali</div>
-      <div class="controls"><label class="flat-select">Canale: <select id="channelSelect"></select></label></div>
-      <div class="subsection" id="channelTotals">
-        <div class="titoletto">Visualizzazioni canale: <strong id="chanVisTot"></strong><span class="copy-icon" data-copy="chanVisTot">content_copy<span class="tooltip">Copiato!</span></span></div>
-        <div class="titoletto">Interazioni canale: <strong id="chanInterTot"></strong><span class="copy-icon" data-copy="chanInterTot">content_copy<span class="tooltip">Copiato!</span></span></div>
-      </div>
-      <div class="panels">
-        <div class="panel">
-          <div class="titoletto">Visualizzazioni<span class="copy-icon" data-copy="chanVisTbl">content_copy<span class="tooltip">Copiato!</span></span></div>
-          <table class="data-table" id="tableVisChan"><thead><tr><th>Date</th><th>Visualizzazioni</th></tr></thead><tbody></tbody></table>
-        </div>
-        <div class="panel">
-          <div class="titoletto">Interazioni<span class="copy-icon" data-copy="chanInterTbl">content_copy<span class="tooltip">Copiato!</span></span></div>
-          <table class="data-table" id="tableInterChan"><thead><tr><th>Date</th><th>Interazioni</th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
+  <div>
+    <button class="btn" onclick="generaAnteprima()">Salva</button>
+    <button class="btn" onclick="exportExcel()">Esporta Excel</button>
+    <button class="btn" onclick="document.getElementById('fileImport').click()">Importa Excel</button>
+    <button class="btn" onclick="cancellaTutto()">Cancella tutto</button>
+    <input type="file" id="fileImport" style="display:none" onchange="importExcel(event)" />
   </div>
 
-  <script>
-    let rawData=[],filtered=[],cols={},totalVis=0,totalInter=0;
-    const findCol=regex=>Object.keys(rawData[0]||{}).find(h=>new RegExp(regex,'i').test(h));
-    const addTooltip=(icon)=>{
-      icon.onclick=()=>{
-        let txt='';const type=icon.dataset.copy;
-        switch(type){
-          case 'visTotal':txt=document.getElementById('formattedVis').innerText;break;
-          case 'interTotal':txt=document.getElementById('formattedInter').innerText;break;
-          case 'visTable':document.querySelectorAll('#tableLabelVis tbody tr').forEach(r=>txt+=r.cells[0].innerText+'\t'+r.cells[1].innerText+'\n');break;
-          case 'interTable':document.querySelectorAll('#tableLabelInter tbody tr').forEach(r=>txt+=r.cells[0].innerText+'\t'+r.cells[1].innerText+'\n');break;
-          case 'chanVisTot':txt=document.getElementById('chanVisTot').innerText;break;
-          case 'chanInterTot':txt=document.getElementById('chanInterTot').innerText;break;
-          case 'chanVisTbl':document.querySelectorAll('#tableVisChan tbody tr').forEach(r=>txt+=r.cells[0].innerText+'\t'+r.cells[1].innerText+'\n');break;
-          case 'chanInterTbl':document.querySelectorAll('#tableInterChan tbody tr').forEach(r=>txt+=r.cells[0].innerText+'\t'+r.cells[1].innerText+'\n');break;
-        }
-        navigator.clipboard.writeText(txt);
-        const tip=icon.querySelector('.tooltip');
-        tip.classList.add('show');
-        setTimeout(()=>tip.classList.remove('show'),2000);
-      };
-    };
-    document.getElementById('fileInput').addEventListener('change',e=>{
-      const f=e.target.files[0];
-      if(!f)return;
-      const r=new FileReader();
-      r.onload=ev=>{
-        const wb=XLSX.read(ev.target.result,{type:'binary'});
-        rawData=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
-        cols={data:findCol('dat'),canale:findCol('canal'),vis:findCol('visualizz'),inter:findCol('interaz'),label:findCol('label'),campagna:findCol('campagn')};
-        if(Object.values(cols).some(x=>!x))return alert('Intestazioni mancanti');
-        processData();
-      };
-      r.readAsBinaryString(f);
+  <div id="preview">
+    <div class="section" id="sectionPPT1">
+      <div class="section-header">
+        <h3>PPT1</h3>
+        <button class="copy-btn btn" onclick="copyHtmlContent('textPPT1')">Copia per Word</button>
+      </div>
+      <div id="textPPT1" class="preview"></div>
+    </div>
+
+    <div class="section" id="sectionPPT2">
+      <div class="section-header">
+        <h3>PPT2</h3>
+        <button class="copy-btn btn" onclick="copyHtmlContent('textPPT2')">Copia per Word</button>
+      </div>
+      <div id="textPPT2" class="preview"></div>
+    </div>
+
+    <div class="section" id="sectionEsteso">
+      <div class="section-header">
+        <h3>Esteso</h3>
+        <button class="copy-btn btn" onclick="copyHtmlContent('textEsteso')">Copia per Word</button>
+      </div>
+      <div id="textEsteso" class="preview"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function get(id) {
+  const el = document.getElementById(id);
+  return el ? el.value || "<span class='rosso'>XXX</span>" : "XXX";
+}
+
+function generaAnteprima() {
+  const ppt1 = `<b>Emesso il Report social di ${get('mese')}</b>: ${get('iscritti')} iscritti totali; ${get('totalePost')} post pubblicati di cui ${get('postIstituzionali')} su temi istituzionali; ${get('campagneATL')} campagne ATL; ${get('commenti')} commenti.`;
+
+  const ppt2 = `Il numero complessivo degli iscritti è pari a ${get('iscritti')}: Facebook ${get('facebook')}; X ${get('twitter')}; Linkedin ${get('linkedin')}; Instagram ${get('instagram')}; YouTube ${get('youtube')}.<br><br>
+Durante il mese abbiamo pubblicato ${get('totalePost')} post (${get('postEditoriali')} editoriali e ${get('postADV')} sponsorizzati): ${get('postFacebook')} post Facebook, ${get('postInstagram')} post Instagram, ${get('postLinkedin')} post Linkedin, ${get('tweet')} tweet, ${get('videoYoutube')} video YouTube, ${get('postADV')} post relativi alle campagne ADV (Facebook e Instagram).<br><br>
+I contenuti editoriali più visualizzati sono stati i post dedicati a: ${get('titolo1')} (${get('vis1')} Visualizzazioni); ${get('titolo2')} (${get('vis2')} Visualizzazioni); ${get('titolo3')} (${get('vis3')} Visualizzazioni).<br><br>
+Sono stati pubblicati ${get('postIstituzionali')} post a contenuto «istituzionale» che hanno generato ${get('viewsIstituzionali')} visualizzazioni e ${get('interazioniIstituzionali')} like e interazioni.<br><br>
+Nel corso del mese sono state gestite ${get('campagneATL')} campagne ATL che hanno sviluppato complessivamente ${get('viewsATL')} impression, raggiunto ${get('utentiATL')} utenti unici e generato un engagement per ${get('clickATL')} link click e ${get('interazioniATL')} interazioni.<br><br>
+Nel mese gli utenti hanno pubblicato ${get('commenti')} commenti ai post. I commenti hanno riguardato, in prevalenza, i “${get('argomentiFacebook')}” (${get('prevalenzaCommenti')}).`;
+
+  const esteso = `Report social del mese di <b>${get('mese')}</b>.<br><br>
+Il numero complessivo degli <b>iscritti</b> è pari a <b>${get('iscritti')}</b>.<br><br>
+I fan <b>Facebook</b> (Poste Italiane, PosteMobile, Postepay) sono <b>${get('facebook')}</b>, mentre su <b>X</b> il numero di followers ammonta a <b>${get('twitter')}</b>. Su <b>Linkedin</b> sono <b>${get('linkedin')}</b>, su <b>Instagram</b>  <b>${get('instagram')}</b> e su <b>YouTube</b> <b>${get('youtube')}</b>.<br><br>
+Durante il mese abbiamo pubblicato <b>${get('totalePost')} post</b> (<b>${get('postEditoriali')} editoriali</b> e <b>${get('postADV')} sponsorizzati</b>):<br>
+• ${get('postFacebook')} post Facebook<br>
+• ${get('postInstagram')} post Instagram<br>
+• ${get('postLinkedin')} post LinkedIn<br>
+• ${get('tweet')} tweet<br>
+• ${get('videoYoutube')} video YouTube<br>
+• ${get('postADV')} post relativi alle campagne ADV (Facebook e Instagram)<br><br>
+<b>I contenuti editoriali più visualizzati</b> sono stati:<br>
+• <b>${get('titolo1')}</b> (${get('vis1')} Visualizzazioni)<br>
+• <b>${get('titolo2')}</b> (${get('vis2')} Visualizzazioni)<br>
+• <b>${get('titolo3')}</b> (${get('vis3')} Visualizzazioni)<br><br>
+L’attività di <b>comunicazione istituzionale</b> ha portato alla pubblicazione di <b>${get('postIstituzionali')} post</b> che hanno generato <b>${get('viewsIstituzionali')} visualizzazioni</b> e <b>${get('interazioniIstituzionali')} like e interazioni</b>.<br><br>
+Sono state gestite <b>${get('campagneATL')} campagne ATL</b> (Facebook e Instagram): <b>${get('elencoCampagne')}</b>.<br><br>
+Le campagne hanno sviluppato complessivamente:<br>
+• <b>${get('viewsATL')} impression</b><br>
+• <b>${get('utentiATL')} utenti unici</b><br>
+e generato engagement per <b>${get('clickATL')} link click</b> e <b>${get('interazioniATL')} interazioni</b>.<br><br>
+Nel mese si registrano <b>${get('commenti')} commenti</b> pubblici sui canali, in ${get('tendenzaCommenti')}  rispetto al mese precedente. I commenti sulla pagina Facebook di Poste Italiane hanno riguardato in prevalenza il tema <b>“${get('argomentiFacebook')}”</b> (${get('prevalenzaCommenti')}).`;
+
+  document.getElementById('textPPT1').innerHTML = ppt1;
+  document.getElementById('textPPT2').innerHTML = ppt2;
+  document.getElementById('textEsteso').innerHTML = esteso;
+}
+
+function copyHtmlContent(id) {
+  const content = document.getElementById(id);
+  const range = document.createRange();
+  range.selectNode(content);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  document.execCommand("copy");
+  sel.removeAllRanges();
+  alert("Contenuto copiato con formattazione Word.");
+}
+
+function exportExcel() {
+  const fields = document.querySelectorAll('input, textarea');
+  const data = Array.from(fields).map(f => [f.id, f.value]);
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, "Report");
+  XLSX.writeFile(wb, "report_social.xlsx");
+}
+
+function importExcel(e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const wb = XLSX.read(evt.target.result, { type: 'binary' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+    rows.forEach(([key, val]) => {
+      const el = document.getElementById(key);
+      if (el) el.value = val;
     });
-    function formatNumberItalian(num) {
-      return (+num || 0).toLocaleString('it-IT');
-    }
-    function processData(){
-      filtered=rawData.filter(r=>r[cols.campagna]==='Editoriale');
-      totalVis=filtered.reduce((a,c)=>a+Number(c[cols.vis]||0),0);
-      totalInter=filtered.reduce((a,c)=>a+Number(c[cols.inter]||0),0);
-      document.getElementById('formattedVis').innerText=formatNumberItalian(totalVis);
-      document.getElementById('formattedInter').innerText=formatNumberItalian(totalInter);
-      const aggV={},aggI={};
-      filtered.forEach(r=>{
-        const l=r[cols.label]||'Nessuna';
-        aggV[l]=(aggV[l]||0)+Number(r[cols.vis]||0);
-        aggI[l]=(aggI[l]||0)+Number(r[cols.inter]||0);
-      });
-      const tv=document.getElementById('tableLabelVis').tBodies[0];
-      tv.innerHTML='';
-      Object.entries(aggV).sort((a,b)=>a[1]-b[1]).forEach(([l,v])=>tv.insertAdjacentHTML('beforeend',`<tr><td>${l}</td><td>${formatNumberItalian(v)}</td></tr>`));
-      const ti=document.getElementById('tableLabelInter').tBodies[0];
-      ti.innerHTML='';
-      Object.entries(aggI).sort((a,b)=>a[1]-b[1]).forEach(([l,v])=>ti.insertAdjacentHTML('beforeend',`<tr><td>${l}</td><td>${formatNumberItalian(v)}</td></tr>`));
-      document.querySelectorAll('.copy-icon').forEach(addTooltip);
-      const groups={};
-      filtered.forEach(r=>{
-        const k=(r[cols.canale]||'').toLowerCase();
-        (groups[k]||(groups[k]=[])).push(r);
-      });
-      const order=['facebook','linkedin','twitter','instagram','youtube'];
-      const names={facebook:'Facebook Poste Italiane',linkedin:'Linkedin Poste Italiane',twitter:'Twitter Poste Italiane',instagram:'Instagram Poste Italiane',youtube:'Youtube Poste Italiane'};
-      const keys=[...order.filter(k=>groups[k]),...Object.keys(groups).filter(k=>!order.includes(k))];
-      const sel=document.getElementById('channelSelect');
-      sel.innerHTML='';
-      keys.forEach(k=>sel.insertAdjacentHTML('beforeend',`<option value="${k}">${names[k]||k}</option>`));
-      sel.onchange=()=>renderChannel(sel.value);
-      renderChannel(keys[0]||'');
-    }
-    function renderChannel(k){
-      const data=(filtered.filter(r=>(r[cols.canale]||'').toLowerCase()===k)).sort((a,b)=>{
-        const pa=a[cols.data].split('/'),pb=b[cols.data].split('/');
-        return new Date(pa[2],pa[1]-1,pa[0])-new Date(pb[2],pb[1]-1,pb[0]);
-      });
-      const visTot=data.reduce((a,c)=>a+Number(c[cols.vis]||0),0);
-      const intTot=data.reduce((a,c)=>a+Number(c[cols.inter]||0),0);
-      document.getElementById('chanVisTot').innerText=formatNumberItalian(visTot);
-      document.getElementById('chanInterTot').innerText=formatNumberItalian(intTot);
-      const tv=document.getElementById('tableVisChan').tBodies[0];
-      const ti=document.getElementById('tableInterChan').tBodies[0];
-      tv.innerHTML=''; ti.innerHTML='';
-      data.forEach(r=>{
-        tv.insertAdjacentHTML('beforeend',`<tr><td>${r[cols.data]}</td><td>${formatNumberItalian(r[cols.vis])}</td></tr>`);
-        ti.insertAdjacentHTML('beforeend',`<tr><td>${r[cols.data]}</td><td>${formatNumberItalian(r[cols.inter])}</td></tr>`);
-      });
-      document.querySelectorAll('[data-copy="chanVisTot"]').forEach(addTooltip);
-      document.querySelectorAll('[data-copy="chanInterTot"]').forEach(addTooltip);
-      document.querySelectorAll('[data-copy="chanVisTbl"]').forEach(addTooltip);
-      document.querySelectorAll('[data-copy="chanInterTbl"]').forEach(addTooltip);
-    }
-  </script>
+  };
+  reader.readAsBinaryString(file);
+}
+
+function cancellaTutto() {
+  const fields = document.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    f.value = '';
+    localStorage.removeItem(f.id);
+  });
+  document.querySelectorAll('.preview').forEach(el => el.innerHTML = '');
+}
+</script>
 </body>
 </html>
