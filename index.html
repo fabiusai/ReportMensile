@@ -148,6 +148,11 @@
       background: var(--white);
     }
 
+    /* Rende il selettore month più evidente */
+    .form-group input[type="month"] {
+      padding-left: 0.5rem;
+    }
+
     .form-group input:focus,
     .form-group textarea:focus {
       outline: none;
@@ -296,7 +301,6 @@
     .preview-content {
       padding: 25px;
       background: var(--light-gray);
-      /* Modifica: uso white-space: normal (non più pre-wrap) */
       white-space: normal;
       line-height: 1.6;
       font-size: 1rem;
@@ -360,7 +364,8 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="mese">Mese di Riferimento</label>
-            <input id="mese" type="text" placeholder="Inserisci Mese di Riferimento" />
+            <!-- input tipo month per scegliere mese+anno -->
+            <input id="mese" type="month" />
           </div>
           <div class="form-group">
             <label for="iscritti">Numero Complessivo Iscritti</label>
@@ -541,10 +546,10 @@
 
       <!-- Pulsanti di Azione -->
       <div class="action-buttons">
-        <button class="btn btn-primary" onclick="generaAnteprima()">
-          <i class="fas fa-save"></i> Salva
+        <button id="btnGenera" class="btn btn-primary" onclick="generaAnteprima(this)">
+          <i class="fas fa-save"></i> Genera report
         </button>
-        <button class="btn btn-secondary" onclick="exportExcel()">
+        <button class="btn btn-secondary" onclick="exportExcel()">  
           <i class="fas fa-file-excel"></i> Esporta Excel
         </button>
         <button class="btn btn-success" onclick="document.getElementById('fileImport').click()">
@@ -561,7 +566,7 @@
         <div class="preview-card" id="sectionPPT1">
           <div class="preview-header">
             <h3><i class="fas fa-presentation"></i> PPT1</h3>
-            <button class="copy-btn" onclick="copyHtmlContent('textPPT1')">
+            <button class="copy-btn" onclick="copyHtmlContent(this, 'textPPT1')">
               <i class="fas fa-copy"></i> Copia per Word
             </button>
           </div>
@@ -571,7 +576,7 @@
         <div class="preview-card" id="sectionPPT2">
           <div class="preview-header">
             <h3><i class="fas fa-chart-bar"></i> PPT2</h3>
-            <button class="copy-btn" onclick="copyHtmlContent('textPPT2')">
+            <button class="copy-btn" onclick="copyHtmlContent(this, 'textPPT2')">
               <i class="fas fa-copy"></i> Copia per Word
             </button>
           </div>
@@ -581,7 +586,7 @@
         <div class="preview-card" id="sectionEsteso">
           <div class="preview-header">
             <h3><i class="fas fa-file-alt"></i> Esteso</h3>
-            <button class="copy-btn" onclick="copyHtmlContent('textEsteso')">
+            <button class="copy-btn" onclick="copyHtmlContent(this, 'textEsteso')">
               <i class="fas fa-copy"></i> Copia per Word
             </button>
           </div>
@@ -591,45 +596,77 @@
     </div>
   </div>
 
-  <!-- SCRIPT JavaScript del file originale, con template literal senza newline -->
+  <!-- SCRIPT JavaScript aggiornato -->
   <script>
+    const mesiItaliani = [
+      "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+    ];
+
+    function formatMese() {
+      const val = document.getElementById("mese").value;
+      if (!val) return "<span class='rosso'>XXX</span>";
+      const [anno, mese] = val.split("-");
+      const nome = mesiItaliani[parseInt(mese, 10) - 1] || "";
+      return `${nome} ${anno}`;
+    }
+
     function get(id) {
       const el = document.getElementById(id);
       return el ? el.value || "<span class='rosso'>XXX</span>" : "XXX";
     }
 
-    function generaAnteprima() {
-      // ppt1 in un’unica riga
-      const ppt1 = "<b>Emesso il Report social di " + get("mese") + "</b>: " +
+    function generaAnteprima(btn) {
+      // Feedback contestuale su "Genera report"
+      const original = btn.innerHTML;
+      btn.innerHTML = "Generazione…";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1000);
+
+      const meseFormattato = formatMese();
+
+      const ppt1 = "<b>Emesso il Report social di " + meseFormattato + "</b>: " +
                    get("iscritti") + " iscritti totali; " +
                    get("totalePost") + " post pubblicati di cui " +
                    get("postIstituzionali") + " su temi istituzionali; " +
                    get("campagneATL") + " campagne ATL; " +
                    get("commenti") + " commenti.";
 
-      // ppt2: un’unica riga + <br> dove serve
-      const ppt2 = "Il numero complessivo degli iscritti è pari a " + get("iscritti") + ": Facebook " + get("facebook") +
-                   "; X " + get("twitter") + "; Linkedin " + get("linkedin") + "; Instagram " + get("instagram") +
+      const ppt2 = "Il numero complessivo degli iscritti è pari a " + get("iscritti") +
+                   ": Facebook " + get("facebook") +
+                   "; X " + get("twitter") +
+                   "; Linkedin " + get("linkedin") +
+                   "; Instagram " + get("instagram") +
                    "; YouTube " + get("youtube") + ".<br><br>" +
-                   "Durante il mese abbiamo pubblicato " + get("totalePost") + " post (" + get("postEditoriali") +
-                   " editoriali e " + get("postADV") + " sponsorizzati): " + get("postFacebook") + " post Facebook, " +
-                   get("postInstagram") + " post Instagram, " + get("postLinkedin") + " post Linkedin, " +
-                   get("tweet") + " tweet, " + get("videoYoutube") + " video YouTube, " +
+                   "Durante il mese abbiamo pubblicato " + get("totalePost") +
+                   " post (" + get("postEditoriali") + " editoriali e " + get("postADV") +
+                   " sponsorizzati): " + get("postFacebook") + " post Facebook, " +
+                   get("postInstagram") + " post Instagram, " +
+                   get("postLinkedin") + " post Linkedin, " +
+                   get("tweet") + " tweet, " +
+                   get("videoYoutube") + " video YouTube, " +
                    get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram).<br><br>" +
                    "I contenuti editoriali più visualizzati sono stati i post dedicati a: " +
                    get("titolo1") + " (" + get("vis1") + " Visualizzazioni); " +
                    get("titolo2") + " (" + get("vis2") + " Visualizzazioni); " +
                    get("titolo3") + " (" + get("vis3") + " Visualizzazioni).<br><br>" +
-                   "Sono stati pubblicati " + get("postIstituzionali") + " post a contenuto «istituzionale» che hanno generato " +
-                   get("viewsIstituzionali") + " visualizzazioni e " + get("interazioniIstituzionali") + " like e interazioni.<br><br>" +
-                   "Nel corso del mese sono state gestite " + get("campagneATL") + " campagne ATL che hanno sviluppato complessivamente " +
-                   get("viewsATL") + " impression, raggiunto " + get("utentiATL") + " utenti unici e generato un engagement per " +
-                   get("clickATL") + " link click e " + get("interazioniATL") + " interazioni.<br><br>" +
-                   "Nel mese gli utenti hanno pubblicato " + get("commenti") + " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
-                   get("argomentiFacebook") + "” (" + get("prevalenzaCommenti") + ").";
+                   "Sono stati pubblicati " + get("postIstituzionali") +
+                   " post a contenuto «istituzionale» che hanno generato " +
+                   get("viewsIstituzionali") + " visualizzazioni e " +
+                   get("interazioniIstituzionali") + " like e interazioni.<br><br>" +
+                   "Nel corso del mese sono state gestite " + get("campagneATL") +
+                   " campagne ATL che hanno sviluppato complessivamente " +
+                   get("viewsATL") + " impression, raggiunto " +
+                   get("utentiATL") + " utenti unici e generato un engagement per " +
+                   get("clickATL") + " link click e " +
+                   get("interazioniATL") + " interazioni.<br><br>" +
+                   "Nel mese gli utenti hanno pubblicato " + get("commenti") +
+                   " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
+                   get("argomentiFacebook") + "” (" +
+                   get("prevalenzaCommenti") + ").";
 
-      // esteso: stringa concatenata su una riga, con <br> dove serve
-      const esteso = "Report social del mese di <b>" + get("mese") + "</b>.<br><br>" +
+      const esteso = "Report social del mese di <b>" + meseFormattato + "</b>.<br><br>" +
                      "Il numero complessivo degli <b>iscritti</b> è pari a <b>" + get("iscritti") + "</b>.<br><br>" +
                      "I fan <b>Facebook</b> (Poste Italiane, PosteMobile, Postepay) sono <b>" + get("facebook") + "</b>, mentre su <b>X</b> il numero di followers ammonta a <b>" + get("twitter") + "</b>. Su <b>Linkedin</b> sono <b>" + get("linkedin") + "</b>, su <b>Instagram</b> <b>" + get("instagram") + "</b> e su <b>YouTube</b> <b>" + get("youtube") + "</b>.<br><br>" +
                      "Durante il mese abbiamo pubblicato <b>" + get("totalePost") + " post</b> (<b>" + get("postEditoriali") + " editoriali</b> e <b>" + get("postADV") + " sponsorizzati</b>):<br>" +
@@ -656,8 +693,8 @@
       document.getElementById("textEsteso").innerHTML = esteso;
     }
 
-    // Funzione copy identica a quella originale (ma con selectNodeContents anziché selectNode)
-    function copyHtmlContent(id) {
+    // Copia con feedback contestuale sul pulsante
+    function copyHtmlContent(btn, id) {
       const content = document.getElementById(id);
       const range = document.createRange();
       range.selectNodeContents(content);
@@ -666,16 +703,27 @@
       sel.addRange(range);
       document.execCommand("copy");
       sel.removeAllRanges();
-      alert("Contenuto copiato con formattazione Word.");
+      const original = btn.innerHTML;
+      btn.innerHTML = "Copiato!";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1000);
     }
 
     function exportExcel() {
+      const btn = event.currentTarget;
+      const original = btn.innerHTML;
       const fields = document.querySelectorAll("input, textarea");
       const data = Array.from(fields).map(f => [f.id, f.value]);
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(data);
       XLSX.utils.book_append_sheet(wb, ws, "Report");
       XLSX.writeFile(wb, "report_social.xlsx");
+      // Feedback contestuale
+      btn.innerHTML = "Esportato!";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1000);
     }
 
     function importExcel(e) {
@@ -690,9 +738,18 @@
         });
       };
       reader.readAsBinaryString(file);
+      // Feedback contestuale su pulsante "Importa Excel"
+      const btn = document.querySelector(".btn-success");
+      const original = btn.innerHTML;
+      btn.innerHTML = "Importato!";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1000);
     }
 
     function cancellaTutto() {
+      const btn = document.querySelector(".btn-danger");
+      const original = btn.innerHTML;
       const fields = document.querySelectorAll("input, textarea");
       fields.forEach(f => {
         f.value = "";
@@ -701,6 +758,11 @@
       document.getElementById("textPPT1").innerHTML = "";
       document.getElementById("textPPT2").innerHTML = "";
       document.getElementById("textEsteso").innerHTML = "";
+      // Feedback contestuale su pulsante "Cancella Tutto"
+      btn.innerHTML = "Cancellato!";
+      setTimeout(() => {
+        btn.innerHTML = original;
+      }, 1000);
     }
   </script>
 </body>
