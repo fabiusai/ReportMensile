@@ -5,10 +5,25 @@
   <title>Report Social - Poste Italiane</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
+  <!-- Flatpickr CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css"
+  />
+
   <!-- Librerie per Excel e Font Awesome -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Flatpickr JS + plugin e localizzazione italiana -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 
   <!-- Stili CSS presi da report_mensile_restyle.html -->
   <style>
@@ -146,11 +161,6 @@
       font-size: 1rem;
       transition: all 0.3s ease;
       background: var(--white);
-    }
-
-    /* Rende il selettore month più evidente */
-    .form-group input[type="month"] {
-      padding-left: 0.5rem;
     }
 
     .form-group input:focus,
@@ -348,7 +358,6 @@
       }
     }
   </style>
-
 </head>
 <body>
   <div class="container">
@@ -364,8 +373,8 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="mese">Mese di Riferimento</label>
-            <!-- input tipo month per scegliere mese+anno -->
-            <input id="mese" type="month" />
+            <!-- Campo con flatpickr per selezionare mese e anno in italiano -->
+            <input id="mese" type="text" placeholder="Seleziona mese e anno" readonly />
           </div>
           <div class="form-group">
             <label for="iscritti">Numero Complessivo Iscritti</label>
@@ -549,7 +558,7 @@
         <button id="btnGenera" class="btn btn-primary" onclick="generaAnteprima(this)">
           <i class="fas fa-save"></i> Genera report
         </button>
-        <button class="btn btn-secondary" onclick="exportExcel()">  
+        <button class="btn btn-secondary" onclick="exportExcel(event)">
           <i class="fas fa-file-excel"></i> Esporta Excel
         </button>
         <button class="btn btn-success" onclick="document.getElementById('fileImport').click()">
@@ -598,18 +607,17 @@
 
   <!-- SCRIPT JavaScript aggiornato -->
   <script>
-    const mesiItaliani = [
-      "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
-    ];
-
-    function formatMese() {
-      const val = document.getElementById("mese").value;
-      if (!val) return "<span class='rosso'>XXX</span>";
-      const [anno, mese] = val.split("-");
-      const nome = mesiItaliani[parseInt(mese, 10) - 1] || "";
-      return `${nome} ${anno}`;
-    }
+    // Inizializza flatpickr su #mese con plugin monthSelect e lingua italiana
+    flatpickr("#mese", {
+      plugins: [
+        new monthSelectPlugin({
+          shorthand: false,
+          dateFormat: "F Y",
+          altFormat: "F Y"
+        })
+      ],
+      locale: "it"
+    });
 
     function get(id) {
       const el = document.getElementById(id);
@@ -619,12 +627,12 @@
     function generaAnteprima(btn) {
       // Feedback contestuale su "Genera report"
       const original = btn.innerHTML;
-      btn.innerHTML = "Generazione…";
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Generazione…";
       setTimeout(() => {
         btn.innerHTML = original;
       }, 1000);
 
-      const meseFormattato = formatMese();
+      const meseFormattato = get("mese") || "<span class='rosso'>XXX</span>";
 
       const ppt1 = "<b>Emesso il Report social di " + meseFormattato + "</b>: " +
                    get("iscritti") + " iscritti totali; " +
@@ -710,7 +718,7 @@
       }, 1000);
     }
 
-    function exportExcel() {
+    function exportExcel(event) {
       const btn = event.currentTarget;
       const original = btn.innerHTML;
       const fields = document.querySelectorAll("input, textarea");
