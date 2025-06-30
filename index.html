@@ -210,6 +210,11 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
+    
+    .btn-primary {
+        background: var(--poste-blue);
+        color: var(--white);
+    }
 
     .btn-secondary {
       background: var(--poste-yellow);
@@ -224,6 +229,10 @@
     .btn-danger {
       background: #6F7F8C;
       color: var(--white);
+    }
+    
+    .btn-primary:hover {
+        background: var(--poste-blue-dark);
     }
 
     .btn-secondary:hover {
@@ -556,7 +565,11 @@
       <!-- Pulsanti di Azione -->
       <div class="action-buttons">
         <button id="btnGenera" class="btn btn-primary" onclick="generaAnteprima(this)">
-          <i class="fas fa-save"></i> Genera report
+          <i class="fas fa-cogs"></i> Genera Report
+        </button>
+        <!-- NUOVO PULSANTE SALVA -->
+        <button id="btnSalva" class="btn btn-primary" onclick="salvaDati(this)">
+            <i class="fas fa-save"></i> Salva Dati
         </button>
         <button class="btn btn-secondary" onclick="exportExcel(event)">
           <i class="fas fa-file-excel"></i> Esporta Excel
@@ -564,7 +577,7 @@
         <button class="btn btn-success" onclick="document.getElementById('fileImport').click()">
           <i class="fas fa-upload"></i> Importa Excel
         </button>
-        <button class="btn btn-danger" onclick="cancellaTutto()">
+        <button class="btn btn-danger" onclick="cancellaTutto(this)">
           <i class="fas fa-trash"></i> Cancella Tutto
         </button>
         <input type="file" id="fileImport" class="file-input" onchange="importExcel(event)" />
@@ -607,7 +620,7 @@
 
   <!-- SCRIPT JavaScript aggiornato -->
   <script>
-    // Inizializza flatpickr su #mese con plugin monthSelect e lingua italiana
+    // Inizializzazione di Flatpickr
     flatpickr("#mese", {
       plugins: [
         new monthSelectPlugin({
@@ -618,6 +631,9 @@
       ],
       locale: "it"
     });
+    
+    // NUOVO: Esegui `caricaDatiSalvati` al caricamento del DOM
+    document.addEventListener('DOMContentLoaded', caricaDatiSalvati);
 
     function get(id) {
       const el = document.getElementById(id);
@@ -625,83 +641,118 @@
     }
 
     function generaAnteprima(btn) {
-      // Feedback contestuale su "Genera report"
       const original = btn.innerHTML;
       btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Generazione…";
+      btn.disabled = true;
+
       setTimeout(() => {
+        const meseFormattato = get("mese") || "<span class='rosso'>XXX</span>";
+
+        const ppt1 = "<b>Emesso il Report social di " + meseFormattato + "</b>: " +
+                     get("iscritti") + " iscritti totali; " +
+                     get("totalePost") + " post pubblicati di cui " +
+                     get("postIstituzionali") + " su temi istituzionali; " +
+                     get("campagneATL") + " campagne ATL; " +
+                     get("commenti") + " commenti.";
+
+        const ppt2 = "Il numero complessivo degli iscritti è pari a " + get("iscritti") +
+                     ": Facebook " + get("facebook") +
+                     "; X " + get("twitter") +
+                     "; Linkedin " + get("linkedin") +
+                     "; Instagram " + get("instagram") +
+                     "; YouTube " + get("youtube") + ".<br><br>" +
+                     "Durante il mese abbiamo pubblicato " + get("totalePost") +
+                     " post (" + get("postEditoriali") + " editoriali e " + get("postADV") +
+                     " sponsorizzati): " + get("postFacebook") + " post Facebook, " +
+                     get("postInstagram") + " post Instagram, " +
+                     get("postLinkedin") + " post Linkedin, " +
+                     get("tweet") + " tweet, " +
+                     get("videoYoutube") + " video YouTube, " +
+                     get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram).<br><br>" +
+                     "I contenuti editoriali più visualizzati sono stati i post dedicati a: " +
+                     get("titolo1") + " (" + get("vis1") + " Visualizzazioni); " +
+                     get("titolo2") + " (" + get("vis2") + " Visualizzazioni); " +
+                     get("titolo3") + " (" + get("vis3") + " Visualizzazioni).<br><br>" +
+                     "Sono stati pubblicati " + get("postIstituzionali") +
+                     " post a contenuto «istituzionale» che hanno generato " +
+                     get("viewsIstituzionali") + " visualizzazioni e " +
+                     get("interazioniIstituzionali") + " like e interazioni.<br><br>" +
+                     "Nel corso del mese sono state gestite " + get("campagneATL") +
+                     " campagne ATL che hanno sviluppato complessivamente " +
+                     get("viewsATL") + " impression, raggiunto " +
+                     get("utentiATL") + " utenti unici e generato un engagement per " +
+                     get("clickATL") + " link click e " +
+                     get("interazioniATL") + " interazioni.<br><br>" +
+                     "Nel mese gli utenti hanno pubblicato " + get("commenti") +
+                     " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
+                     get("argomentiFacebook") + "” (" +
+                     get("prevalenzaCommenti") + ").";
+
+        const esteso = "Report social del mese di <b>" + meseFormattato + "</b>.<br><br>" +
+                       "Il numero complessivo degli <b>iscritti</b> è pari a <b>" + get("iscritti") + "</b>.<br><br>" +
+                       "I fan <b>Facebook</b> (Poste Italiane, PosteMobile, Postepay) sono <b>" + get("facebook") + "</b>, mentre su <b>X</b> il numero di followers ammonta a <b>" + get("twitter") + "</b>. Su <b>Linkedin</b> sono <b>" + get("linkedin") + "</b>, su <b>Instagram</b> <b>" + get("instagram") + "</b> e su <b>YouTube</b> <b>" + get("youtube") + "</b>.<br><br>" +
+                       "Durante il mese abbiamo pubblicato <b>" + get("totalePost") + " post</b> (<b>" + get("postEditoriali") + " editoriali</b> e <b>" + get("postADV") + " sponsorizzati</b>):<br>" +
+                       "• " + get("postFacebook") + " post Facebook<br>" +
+                       "• " + get("postInstagram") + " post Instagram<br>" +
+                       "• " + get("postLinkedin") + " post LinkedIn<br>" +
+                       "• " + get("tweet") + " tweet<br>" +
+                       "• " + get("videoYoutube") + " video YouTube<br>" +
+                       "• " + get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram)<br><br>" +
+                       "<b>I contenuti editoriali più visualizzati</b> sono stati:<br>" +
+                       "• <b>" + get("titolo1") + "</b> (" + get("vis1") + " Visualizzazioni)<br>" +
+                       "• <b>" + get("titolo2") + "</b> (" + get("vis2") + " Visualizzazioni)<br>" +
+                       "• <b>" + get("titolo3") + "</b> (" + get("vis3") + " Visualizzazioni)<br><br>" +
+                       "L’attività di <b>comunicazione istituzionale</b> ha portato alla pubblicazione di <b>" + get("postIstituzionali") + " post</b> che hanno generato <b>" + get("viewsIstituzionali") + " visualizzazioni</b> e <b>" + get("interazioniIstituzionali") + " like e interazioni</b>.<br><br>" +
+                       "Sono state gestite <b>" + get("campagneATL") + " campagne ATL</b> (Facebook e Instagram): <b>" + get("elencoCampagne") + "</b>.<br><br>" +
+                       "Le campagne hanno sviluppato complessivamente:<br>" +
+                       "• <b>" + get("viewsATL") + " impression</b><br>" +
+                       "• <b>" + get("utentiATL") + " utenti unici</b><br>" +
+                       "e generato engagement per <b>" + get("clickATL") + " link click</b> e <b>" + get("interazioniATL") + " interazioni</b>.<br><br>" +
+                       "Nel mese si registrano <b>" + get("commenti") + " commenti</b> pubblici sui canali, in " + get("tendenzaCommenti") + " rispetto al mese precedente. I commenti sulla pagina Facebook di Poste Italiane hanno riguardato in prevalenza il tema <b>“" + get("argomentiFacebook") + "”</b> (" + get("prevalenzaCommenti") + ").";
+
+        document.getElementById("textPPT1").innerHTML = ppt1;
+        document.getElementById("textPPT2").innerHTML = ppt2;
+        document.getElementById("textEsteso").innerHTML = esteso;
+        
         btn.innerHTML = original;
-      }, 1000);
+        btn.disabled = false;
+      }, 500);
+    }
+    
+    // NUOVA FUNZIONE: Salva i dati nel localStorage
+    function salvaDati(btn) {
+      const original = btn.innerHTML;
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Salvataggio…";
+      btn.disabled = true;
 
-      const meseFormattato = get("mese") || "<span class='rosso'>XXX</span>";
-
-      const ppt1 = "<b>Emesso il Report social di " + meseFormattato + "</b>: " +
-                   get("iscritti") + " iscritti totali; " +
-                   get("totalePost") + " post pubblicati di cui " +
-                   get("postIstituzionali") + " su temi istituzionali; " +
-                   get("campagneATL") + " campagne ATL; " +
-                   get("commenti") + " commenti.";
-
-      const ppt2 = "Il numero complessivo degli iscritti è pari a " + get("iscritti") +
-                   ": Facebook " + get("facebook") +
-                   "; X " + get("twitter") +
-                   "; Linkedin " + get("linkedin") +
-                   "; Instagram " + get("instagram") +
-                   "; YouTube " + get("youtube") + ".<br><br>" +
-                   "Durante il mese abbiamo pubblicato " + get("totalePost") +
-                   " post (" + get("postEditoriali") + " editoriali e " + get("postADV") +
-                   " sponsorizzati): " + get("postFacebook") + " post Facebook, " +
-                   get("postInstagram") + " post Instagram, " +
-                   get("postLinkedin") + " post Linkedin, " +
-                   get("tweet") + " tweet, " +
-                   get("videoYoutube") + " video YouTube, " +
-                   get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram).<br><br>" +
-                   "I contenuti editoriali più visualizzati sono stati i post dedicati a: " +
-                   get("titolo1") + " (" + get("vis1") + " Visualizzazioni); " +
-                   get("titolo2") + " (" + get("vis2") + " Visualizzazioni); " +
-                   get("titolo3") + " (" + get("vis3") + " Visualizzazioni).<br><br>" +
-                   "Sono stati pubblicati " + get("postIstituzionali") +
-                   " post a contenuto «istituzionale» che hanno generato " +
-                   get("viewsIstituzionali") + " visualizzazioni e " +
-                   get("interazioniIstituzionali") + " like e interazioni.<br><br>" +
-                   "Nel corso del mese sono state gestite " + get("campagneATL") +
-                   " campagne ATL che hanno sviluppato complessivamente " +
-                   get("viewsATL") + " impression, raggiunto " +
-                   get("utentiATL") + " utenti unici e generato un engagement per " +
-                   get("clickATL") + " link click e " +
-                   get("interazioniATL") + " interazioni.<br><br>" +
-                   "Nel mese gli utenti hanno pubblicato " + get("commenti") +
-                   " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
-                   get("argomentiFacebook") + "” (" +
-                   get("prevalenzaCommenti") + ").";
-
-      const esteso = "Report social del mese di <b>" + meseFormattato + "</b>.<br><br>" +
-                     "Il numero complessivo degli <b>iscritti</b> è pari a <b>" + get("iscritti") + "</b>.<br><br>" +
-                     "I fan <b>Facebook</b> (Poste Italiane, PosteMobile, Postepay) sono <b>" + get("facebook") + "</b>, mentre su <b>X</b> il numero di followers ammonta a <b>" + get("twitter") + "</b>. Su <b>Linkedin</b> sono <b>" + get("linkedin") + "</b>, su <b>Instagram</b> <b>" + get("instagram") + "</b> e su <b>YouTube</b> <b>" + get("youtube") + "</b>.<br><br>" +
-                     "Durante il mese abbiamo pubblicato <b>" + get("totalePost") + " post</b> (<b>" + get("postEditoriali") + " editoriali</b> e <b>" + get("postADV") + " sponsorizzati</b>):<br>" +
-                     "• " + get("postFacebook") + " post Facebook<br>" +
-                     "• " + get("postInstagram") + " post Instagram<br>" +
-                     "• " + get("postLinkedin") + " post LinkedIn<br>" +
-                     "• " + get("tweet") + " tweet<br>" +
-                     "• " + get("videoYoutube") + " video YouTube<br>" +
-                     "• " + get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram)<br><br>" +
-                     "<b>I contenuti editoriali più visualizzati</b> sono stati:<br>" +
-                     "• <b>" + get("titolo1") + "</b> (" + get("vis1") + " Visualizzazioni)<br>" +
-                     "• <b>" + get("titolo2") + "</b> (" + get("vis2") + " Visualizzazioni)<br>" +
-                     "• <b>" + get("titolo3") + "</b> (" + get("vis3") + " Visualizzazioni)<br><br>" +
-                     "L’attività di <b>comunicazione istituzionale</b> ha portato alla pubblicazione di <b>" + get("postIstituzionali") + " post</b> che hanno generato <b>" + get("viewsIstituzionali") + " visualizzazioni</b> e <b>" + get("interazioniIstituzionali") + " like e interazioni</b>.<br><br>" +
-                     "Sono state gestite <b>" + get("campagneATL") + " campagne ATL</b> (Facebook e Instagram): <b>" + get("elencoCampagne") + "</b>.<br><br>" +
-                     "Le campagne hanno sviluppato complessivamente:<br>" +
-                     "• <b>" + get("viewsATL") + " impression</b><br>" +
-                     "• <b>" + get("utentiATL") + " utenti unici</b><br>" +
-                     "e generato engagement per <b>" + get("clickATL") + " link click</b> e <b>" + get("interazioniATL") + " interazioni</b>.<br><br>" +
-                     "Nel mese si registrano <b>" + get("commenti") + " commenti</b> pubblici sui canali, in " + get("tendenzaCommenti") + " rispetto al mese precedente. I commenti sulla pagina Facebook di Poste Italiane hanno riguardato in prevalenza il tema <b>“" + get("argomentiFacebook") + "”</b> (" + get("prevalenzaCommenti") + ").";
-
-      document.getElementById("textPPT1").innerHTML = ppt1;
-      document.getElementById("textPPT2").innerHTML = ppt2;
-      document.getElementById("textEsteso").innerHTML = esteso;
+      setTimeout(() => {
+        const fields = document.querySelectorAll("input, textarea");
+        fields.forEach(f => {
+            if (f.id) { // Salva solo se il campo ha un id
+                localStorage.setItem(f.id, f.value);
+            }
+        });
+        btn.innerHTML = "<i class='fas fa-check'></i> Salvato!";
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }, 1500);
+      }, 500);
     }
 
-    // Copia con feedback contestuale sul pulsante
+    // NUOVA FUNZIONE: Carica i dati dal localStorage
+    function caricaDatiSalvati() {
+        const fields = document.querySelectorAll("input, textarea");
+        fields.forEach(f => {
+            if (f.id) {
+                const savedValue = localStorage.getItem(f.id);
+                if (savedValue !== null) {
+                    f.value = savedValue;
+                }
+            }
+        });
+    }
+
     function copyHtmlContent(btn, id) {
       const content = document.getElementById(id);
       const range = document.createRange();
@@ -721,20 +772,24 @@
     function exportExcel(event) {
       const btn = event.currentTarget;
       const original = btn.innerHTML;
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Esporto...";
+      btn.disabled = true;
       const fields = document.querySelectorAll("input, textarea");
       const data = Array.from(fields).map(f => [f.id, f.value]);
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(data);
       XLSX.utils.book_append_sheet(wb, ws, "Report");
       XLSX.writeFile(wb, "report_social.xlsx");
-      // Feedback contestuale
-      btn.innerHTML = "Esportato!";
-      setTimeout(() => {
-        btn.innerHTML = original;
-      }, 1000);
+      btn.innerHTML = original;
+      btn.disabled = false;
     }
 
     function importExcel(e) {
+      const btn = document.querySelector(".btn-success");
+      const original = btn.innerHTML;
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Importo...";
+      btn.disabled = true;
+
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onload = function(evt) {
@@ -744,33 +799,40 @@
           const el = document.getElementById(key);
           if (el) el.value = val;
         });
+        
+        btn.innerHTML = "<i class='fas fa-check'></i> Importato!";
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }, 1500);
       };
       reader.readAsBinaryString(file);
-      // Feedback contestuale su pulsante "Importa Excel"
-      const btn = document.querySelector(".btn-success");
-      const original = btn.innerHTML;
-      btn.innerHTML = "Importato!";
-      setTimeout(() => {
-        btn.innerHTML = original;
-      }, 1000);
     }
 
-    function cancellaTutto() {
-      const btn = document.querySelector(".btn-danger");
+    // MODIFICATA: Aggiunta la pulizia del localStorage
+    function cancellaTutto(btn) {
       const original = btn.innerHTML;
-      const fields = document.querySelectorAll("input, textarea");
-      fields.forEach(f => {
-        f.value = "";
-        localStorage.removeItem(f.id);
-      });
-      document.getElementById("textPPT1").innerHTML = "";
-      document.getElementById("textPPT2").innerHTML = "";
-      document.getElementById("textEsteso").innerHTML = "";
-      // Feedback contestuale su pulsante "Cancella Tutto"
-      btn.innerHTML = "Cancellato!";
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Cancello…";
+      btn.disabled = true;
+      
       setTimeout(() => {
-        btn.innerHTML = original;
-      }, 1000);
+        const fields = document.querySelectorAll("input, textarea");
+        fields.forEach(f => {
+          f.value = "";
+          if (f.id) { // Rimuove la chiave dal localStorage
+              localStorage.removeItem(f.id);
+          }
+        });
+        document.getElementById("textPPT1").innerHTML = "";
+        document.getElementById("textPPT2").innerHTML = "";
+        document.getElementById("textEsteso").innerHTML = "";
+        
+        btn.innerHTML = "<i class='fas fa-check'></i> Cancellato!";
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }, 1500);
+      }, 500);
     }
   </script>
 </body>
