@@ -567,7 +567,6 @@
         <button id="btnGenera" class="btn btn-primary" onclick="generaAnteprima(this)">
           <i class="fas fa-cogs"></i> Genera Report
         </button>
-        <!-- NUOVO PULSANTE SALVA -->
         <button id="btnSalva" class="btn btn-primary" onclick="salvaDati(this)">
             <i class="fas fa-save"></i> Salva Dati
         </button>
@@ -632,7 +631,7 @@
       locale: "it"
     });
     
-    // NUOVO: Esegui `caricaDatiSalvati` al caricamento del DOM
+    // Esegui `caricaDatiSalvati` al caricamento del DOM
     document.addEventListener('DOMContentLoaded', caricaDatiSalvati);
 
     function get(id) {
@@ -719,7 +718,6 @@
       }, 500);
     }
     
-    // NUOVA FUNZIONE: Salva i dati nel localStorage
     function salvaDati(btn) {
       const original = btn.innerHTML;
       btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Salvataggio…";
@@ -728,7 +726,7 @@
       setTimeout(() => {
         const fields = document.querySelectorAll("input, textarea");
         fields.forEach(f => {
-            if (f.id) { // Salva solo se il campo ha un id
+            if (f.id) {
                 localStorage.setItem(f.id, f.value);
             }
         });
@@ -740,7 +738,6 @@
       }, 500);
     }
 
-    // NUOVA FUNZIONE: Carica i dati dal localStorage
     function caricaDatiSalvati() {
         const fields = document.querySelectorAll("input, textarea");
         fields.forEach(f => {
@@ -769,17 +766,43 @@
       }, 1000);
     }
 
+    // --- FUNZIONE MODIFICATA ---
     function exportExcel(event) {
       const btn = event.currentTarget;
       const original = btn.innerHTML;
       btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Esporto...";
       btn.disabled = true;
+
+      // Logica per generare il nome del file dinamicamente
+      const meseRiferimento = document.getElementById("mese").value;
+      let nomeFile = "report_mensile.xlsx"; // Nome predefinito
+
+      if (meseRiferimento) {
+        const mesi = {
+          "gennaio": "01", "febbraio": "02", "marzo": "03", "aprile": "04",
+          "maggio": "05", "giugno": "06", "luglio": "07", "agosto": "08",
+          "settembre": "09", "ottobre": "10", "novembre": "11", "dicembre": "12"
+        };
+        const parts = meseRiferimento.split(' ');
+        if (parts.length === 2) {
+          const meseNome = parts[0].toLowerCase();
+          const anno = parts[1];
+          const meseNumero = mesi[meseNome];
+          if (anno && meseNumero) {
+            nomeFile = `${anno}_${meseNumero}_report_mensile.xlsx`;
+          }
+        }
+      }
+
       const fields = document.querySelectorAll("input, textarea");
       const data = Array.from(fields).map(f => [f.id, f.value]);
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(data);
       XLSX.utils.book_append_sheet(wb, ws, "Report");
-      XLSX.writeFile(wb, "report_social.xlsx");
+
+      // Utilizza il nome del file generato
+      XLSX.writeFile(wb, nomeFile);
+      
       btn.innerHTML = original;
       btn.disabled = false;
     }
@@ -797,7 +820,7 @@
         const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
         rows.forEach(([key, val]) => {
           const el = document.getElementById(key);
-          if (el) el.value = val;
+          if (el) el.value = val !== undefined ? val : '';
         });
         
         btn.innerHTML = "<i class='fas fa-check'></i> Importato!";
@@ -809,7 +832,6 @@
       reader.readAsBinaryString(file);
     }
 
-    // MODIFICATA: Aggiunta la pulizia del localStorage
     function cancellaTutto(btn) {
       const original = btn.innerHTML;
       btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Cancello…";
@@ -819,7 +841,7 @@
         const fields = document.querySelectorAll("input, textarea");
         fields.forEach(f => {
           f.value = "";
-          if (f.id) { // Rimuove la chiave dal localStorage
+          if (f.id) {
               localStorage.removeItem(f.id);
           }
         });
