@@ -337,6 +337,11 @@
       display: none;
     }
 
+    .calcolato {
+      background-color: #f0f0f0;
+      color: #666;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .main-content {
@@ -425,35 +430,35 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="totalePost">Totale Post Pubblicati</label>
-            <input id="totalePost" type="text" placeholder="Inserisci Totale Post Pubblicati" />
+            <input id="totalePost" type="text" class="calcolato" readonly />
           </div>
           <div class="form-group">
             <label for="postEditoriali">Post Editoriali</label>
-            <input id="postEditoriali" type="text" placeholder="Inserisci Post Editoriali" />
+            <input id="postEditoriali" type="text" class="calcolato" readonly />
           </div>
           <div class="form-group">
             <label for="postADV">Post Pubblicitari (ADV)</label>
-            <input id="postADV" type="text" placeholder="Inserisci Post Pubblicitari (ADV)" />
+            <input id="postADV" type="text" placeholder="Inserisci Post Pubblicitari (ADV)" oninput="calcolaTotali()" />
           </div>
           <div class="form-group">
             <label for="postFacebook">Post Facebook</label>
-            <input id="postFacebook" type="text" placeholder="Inserisci Post Facebook" />
+            <input id="postFacebook" type="text" placeholder="Inserisci Post Facebook" oninput="calcolaTotali()" />
           </div>
           <div class="form-group">
             <label for="postInstagram">Post Instagram</label>
-            <input id="postInstagram" type="text" placeholder="Inserisci Post Instagram" />
+            <input id="postInstagram" type="text" placeholder="Inserisci Post Instagram" oninput="calcolaTotali()" />
           </div>
           <div class="form-group">
             <label for="postLinkedin">Post LinkedIn</label>
-            <input id="postLinkedin" type="text" placeholder="Inserisci Post LinkedIn" />
+            <input id="postLinkedin" type="text" placeholder="Inserisci Post LinkedIn" oninput="calcolaTotali()" />
           </div>
           <div class="form-group">
-            <label for="tweet">Tweet</label>
-            <input id="tweet" type="text" placeholder="Inserisci Tweet" />
+            <label for="tweet">Post X</label>
+            <input id="tweet" type="text" placeholder="Inserisci Post X" oninput="calcolaTotali()" />
           </div>
           <div class="form-group">
             <label for="videoYoutube">Video YouTube</label>
-            <input id="videoYoutube" type="text" placeholder="Inserisci Video YouTube" />
+            <input id="videoYoutube" type="text" placeholder="Inserisci Video YouTube" oninput="calcolaTotali()" />
           </div>
         </div>
       </div>
@@ -632,11 +637,33 @@
     });
     
     // Esegui `caricaDatiSalvati` al caricamento del DOM
-    document.addEventListener('DOMContentLoaded', caricaDatiSalvati);
+    document.addEventListener('DOMContentLoaded', function() {
+      caricaDatiSalvati();
+      calcolaTotali(); // Calcola i totali iniziali
+    });
 
     function get(id) {
       const el = document.getElementById(id);
       return el ? el.value || "<span class='rosso'>XXX</span>" : "XXX";
+    }
+
+    // Funzione per calcolare i totali
+    function calcolaTotali() {
+      // Ottieni i valori dagli input
+      const postFacebook = parseFloat(document.getElementById('postFacebook').value) || 0;
+      const postInstagram = parseFloat(document.getElementById('postInstagram').value) || 0;
+      const postLinkedin = parseFloat(document.getElementById('postLinkedin').value) || 0;
+      const postX = parseFloat(document.getElementById('tweet').value) || 0;
+      const videoYoutube = parseFloat(document.getElementById('videoYoutube').value) || 0;
+      const postADV = parseFloat(document.getElementById('postADV').value) || 0;
+      
+      // Calcola i totali
+      const postEditoriali = postFacebook + postInstagram + postLinkedin + postX + videoYoutube;
+      const totalePost = postEditoriali + postADV;
+      
+      // Aggiorna i campi calcolati
+      document.getElementById('postEditoriali').value = postEditoriali;
+      document.getElementById('totalePost').value = totalePost;
     }
 
     function generaAnteprima(btn) {
@@ -665,9 +692,9 @@
                      " sponsorizzati): " + get("postFacebook") + " post Facebook, " +
                      get("postInstagram") + " post Instagram, " +
                      get("postLinkedin") + " post Linkedin, " +
-                     get("tweet") + " tweet, " +
+                     get("tweet") + " post X, " +
                      get("videoYoutube") + " video YouTube, " +
-                     get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram).<br><br>" +
+                     get("postADV") + " post relativi alle campagne ADV (Facebook and Instagram).<br><br>" +
                      "I contenuti editoriali più visualizzati sono stati i post dedicati a: " +
                      get("titolo1") + " (" + get("vis1") + " Visualizzazioni); " +
                      get("titolo2") + " (" + get("vis2") + " Visualizzazioni); " +
@@ -683,7 +710,7 @@
                      get("clickATL") + " link click e " +
                      get("interazioniATL") + " interazioni.<br><br>" +
                      "Nel mese gli utenti hanno pubblicato " + get("commenti") +
-                     " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
+                     " commenti aos post. I commenti hanno riguardato, in prevalenza, i “" +
                      get("argomentiFacebook") + "” (" +
                      get("prevalenzaCommenti") + ").";
 
@@ -694,7 +721,7 @@
                        "• " + get("postFacebook") + " post Facebook<br>" +
                        "• " + get("postInstagram") + " post Instagram<br>" +
                        "• " + get("postLinkedin") + " post LinkedIn<br>" +
-                       "• " + get("tweet") + " tweet<br>" +
+                       "• " + get("tweet") + " post X<br>" +
                        "• " + get("videoYoutube") + " video YouTube<br>" +
                        "• " + get("postADV") + " post relativi alle campagne ADV (Facebook e Instagram)<br><br>" +
                        "<b>I contenuti editoriali più visualizzati</b> sono stati:<br>" +
@@ -759,102 +786,155 @@
       sel.addRange(range);
       document.execCommand("copy");
       sel.removeAllRanges();
+
       const original = btn.innerHTML;
-      btn.innerHTML = "Copiato!";
+      btn.innerHTML = "<i class='fas fa-check'></i> Copiato!";
       setTimeout(() => {
         btn.innerHTML = original;
-      }, 1000);
-    }
-
-    // --- FUNZIONE MODIFICATA ---
-    function exportExcel(event) {
-      const btn = event.currentTarget;
-      const original = btn.innerHTML;
-      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Esporto...";
-      btn.disabled = true;
-
-      // Logica per generare il nome del file dinamicamente
-      const meseRiferimento = document.getElementById("mese").value;
-      let nomeFile = "report_mensile.xlsx"; // Nome predefinito
-
-      if (meseRiferimento) {
-        const mesi = {
-          "gennaio": "01", "febbraio": "02", "marzo": "03", "aprile": "04",
-          "maggio": "05", "giugno": "06", "luglio": "07", "agosto": "08",
-          "settembre": "09", "ottobre": "10", "novembre": "11", "dicembre": "12"
-        };
-        const parts = meseRiferimento.split(' ');
-        if (parts.length === 2) {
-          const meseNome = parts[0].toLowerCase();
-          const anno = parts[1];
-          const meseNumero = mesi[meseNome];
-          if (anno && meseNumero) {
-            nomeFile = `${anno}_${meseNumero}_report_mensile.xlsx`;
-          }
-        }
-      }
-
-      const fields = document.querySelectorAll("input, textarea");
-      const data = Array.from(fields).map(f => [f.id, f.value]);
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      XLSX.utils.book_append_sheet(wb, ws, "Report");
-
-      // Utilizza il nome del file generato
-      XLSX.writeFile(wb, nomeFile);
-      
-      btn.innerHTML = original;
-      btn.disabled = false;
-    }
-
-    function importExcel(e) {
-      const btn = document.querySelector(".btn-success");
-      const original = btn.innerHTML;
-      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Importo...";
-      btn.disabled = true;
-
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const wb = XLSX.read(evt.target.result, { type: "binary" });
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
-        rows.forEach(([key, val]) => {
-          const el = document.getElementById(key);
-          if (el) el.value = val !== undefined ? val : '';
-        });
-        
-        btn.innerHTML = "<i class='fas fa-check'></i> Importato!";
-        setTimeout(() => {
-            btn.innerHTML = original;
-            btn.disabled = false;
-        }, 1500);
-      };
-      reader.readAsBinaryString(file);
+      }, 1500);
     }
 
     function cancellaTutto(btn) {
       const original = btn.innerHTML;
-      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Cancello…";
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Cancellazione…";
       btn.disabled = true;
-      
-      setTimeout(() => {
-        const fields = document.querySelectorAll("input, textarea");
-        fields.forEach(f => {
-          f.value = "";
-          if (f.id) {
-              localStorage.removeItem(f.id);
-          }
-        });
-        document.getElementById("textPPT1").innerHTML = "";
-        document.getElementById("textPPT2").innerHTML = "";
-        document.getElementById("textEsteso").innerHTML = "";
-        
-        btn.innerHTML = "<i class='fas fa-check'></i> Cancellato!";
+
+      if (confirm("Sei sicuro di voler cancellare tutti i dati?")) {
         setTimeout(() => {
+          const fields = document.querySelectorAll("input, textarea");
+          fields.forEach(f => {
+            f.value = "";
+            localStorage.removeItem(f.id);
+          });
+          document.getElementById("textPPT1").innerHTML = "";
+          document.getElementById("textPPT2").innerHTML = "";
+          document.getElementById("textEsteso").innerHTML = "";
+          
+          btn.innerHTML = "<i class='fas fa-check'></i> Cancellato!";
+          setTimeout(() => {
             btn.innerHTML = original;
             btn.disabled = false;
+          }, 1500);
+        }, 500);
+      } else {
+        btn.innerHTML = original;
+        btn.disabled = false;
+      }
+    }
+
+    // Funzione per esportare i dati in Excel
+    function exportExcel(event) {
+      event.preventDefault();
+      
+      const btn = event.target;
+      const original = btn.innerHTML;
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Esportazione…";
+      btn.disabled = true;
+
+      try {
+        // Ottieni tutti i dati dai campi del form
+        const data = [];
+        const headers = ["Campo", "Valore"];
+        data.push(headers);
+        
+        // Raccogli tutti i campi input e textarea
+        const fields = document.querySelectorAll("input, textarea");
+        fields.forEach(field => {
+          if (field.id && !field.classList.contains('file-input')) {
+            data.push([field.id, field.value]);
+          }
+        });
+        
+        // Crea un foglio di lavoro
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        
+        // Crea una cartella di lavoro e aggiungi il foglio
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Dati Report");
+        
+        // Genera il file Excel e scaricalo
+        const wbout = XLSX.write(wb, {bookType:'xlsx', type:'binary'});
+        
+        function s2ab(s) {
+          const buf = new ArrayBuffer(s.length);
+          const view = new Uint8Array(buf);
+          for (let i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+          return buf;
+        }
+        
+        // Ottieni il mese per il nome del file
+        const mese = document.getElementById('mese').value || 'report';
+        const filename = `Report_Social_${mese.replace(/\s+/g, '_')}.xlsx`;
+        
+        // Salva il file
+        saveAs(new Blob([s2ab(wbout)], {type:"application/octet-stream"}), filename);
+        
+        btn.innerHTML = "<i class='fas fa-check'></i> Esportato!";
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.disabled = false;
         }, 1500);
-      }, 500);
+      } catch (error) {
+        console.error("Errore durante l'esportazione:", error);
+        alert("Si è verificato un errore durante l'esportazione. Controlla la console per maggiori dettagli.");
+        btn.innerHTML = original;
+        btn.disabled = false;
+      }
+    }
+
+    // Funzione per importare i dati da Excel
+    function importExcel(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const btn = document.querySelector('.btn-success');
+      const original = btn.innerHTML;
+      btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Importazione…";
+      btn.disabled = true;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, {type: 'array'});
+          
+          // Prendi il primo foglio
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          
+          // Converti il foglio in array di array
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+          
+          // Rimuovi l'intestazione
+          jsonData.shift();
+          
+          // Popola i campi del form
+          jsonData.forEach(row => {
+            if (row.length >= 2) {
+              const fieldId = row[0];
+              const value = row[1];
+              const field = document.getElementById(fieldId);
+              if (field) {
+                field.value = value;
+              }
+            }
+          });
+          
+          // Ricalcola i totali
+          calcolaTotali();
+          
+          btn.innerHTML = "<i class='fas fa-check'></i> Importato!";
+          setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+          }, 1500);
+        } catch (error) {
+          console.error("Errore durante l'importazione:", error);
+          alert("Si è verificato un errore durante l'importazione. Assicurati che il file Excel sia nel formato corretto.");
+          btn.innerHTML = original;
+          btn.disabled = false;
+        }
+      };
+      reader.readAsArrayBuffer(file);
     }
   </script>
 </body>
