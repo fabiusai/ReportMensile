@@ -262,14 +262,14 @@
       cursor: pointer;
     }
 
-    /* BOTTONI ACTION */
+    /* BOTTONI ACTION - MODIFICATI PER STARE SU UNA RIGA */
     .action-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 10px; /* Ridotto il gap da 15px */
       justify-content: center;
       margin: 40px 0;
-      padding: 30px;
+      padding: 20px; /* Ridotto il padding verticale */
       background: var(--white);
       border: 1px solid var(--border-color);
       border-radius: 4px;
@@ -280,15 +280,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 12px 30px;
-      font-size: 1rem;
+      gap: 8px; /* Ridotto gap icona-testo */
+      padding: 10px 15px; /* PADDING RIDOTTO (era 12px 30px) */
+      font-size: 0.95rem; /* Font leggermente più piccolo */
       font-weight: 600;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
-      min-width: 160px;
+      min-width: 130px; /* MIN-WIDTH RIDOTTO (era 160px) */
       border-radius: 2px;
     }
 
@@ -319,6 +319,14 @@
     }
     .btn-success:hover {
       background-color: #444;
+    }
+    
+    .btn-json {
+      background-color: #28a745; 
+      color: var(--white);
+    }
+    .btn-json:hover {
+      background-color: #1e7e34;
     }
 
     .btn-danger {
@@ -693,10 +701,15 @@
         <button class="btn btn-success" onclick="document.getElementById('fileImport').click()">
           <i class="fas fa-upload"></i> Importa Excel
         </button>
+        <button class="btn btn-json" onclick="document.getElementById('jsonImport').click()">
+          <i class="fas fa-file-code"></i> Importa JSON
+        </button>
         <button class="btn btn-danger" onclick="cancellaTutto(this)">
           <i class="fas fa-trash"></i> Reset
         </button>
-        <input type="file" id="fileImport" class="file-input" onchange="importExcel(event)" />
+        
+        <input type="file" id="fileImport" class="file-input" onchange="importExcel(event)" accept=".xlsx, .xls" />
+        <input type="file" id="jsonImport" class="file-input" onchange="importJson(event)" accept=".json" />
       </div>
 
       <div class="preview-section" id="preview">
@@ -712,7 +725,7 @@
 
         <div class="preview-card" id="sectionPPT2">
           <div class="preview-header">
-            <h3>PPT 2 (Dettaglio Canali)</h3>
+            <h3>PPT 2 (Presentazione Staff Meeting)</h3>
             <button class="copy-btn" onclick="copyHtmlContent(this, 'textPPT2')">
               <i class="fas fa-copy"></i> Copia
             </button>
@@ -820,20 +833,25 @@
                      get("campagneATL") + " campagne ATL; " +
                      get("commenti") + " commenti.";
         
+        // Ordine fisso dei canali richiesto
         const platforms = [
-          { name: 'Facebook', value: parseInt(get('facebook').replace(/\D/g,'')) || 0, id: 'facebook' },
-          { name: 'X', value: parseInt(get('twitter').replace(/\D/g,'')) || 0, id: 'twitter' },
-          { name: 'Linkedin', value: parseInt(get('linkedin').replace(/\D/g,'')) || 0, id: 'linkedin' },
-          { name: 'Instagram', value: parseInt(get('instagram').replace(/\D/g,'')) || 0, id: 'instagram' },
-          { name: 'YouTube', value: parseInt(get('youtube').replace(/\D/g,'')) || 0, id: 'youtube' },
-          { name: 'Whatsapp', value: parseInt(get('whatsapp').replace(/\D/g,'')) || 0, id: 'whatsapp' }
+          { name: 'Facebook', id: 'facebook' },
+          { name: 'Instagram', id: 'instagram' },
+          { name: 'Linkedin', id: 'linkedin' },
+          { name: 'X', id: 'twitter' },
+          { name: 'Whatsapp', id: 'whatsapp' },
+          { name: 'YouTube', id: 'youtube' }
         ];
 
-        platforms.sort((a, b) => b.value - a.value);
-
+        // Creazione stringa ordinata (senza sorting per valore)
         const iscrittiOrdinatiString = platforms
-          .filter(p => p.value > 0)
-          .map(p => `${p.name} ${get(p.id)}`)
+          .map(p => {
+             const val = get(p.id);
+             const numVal = parseInt(val.replace(/\D/g,'')) || 0;
+             return { name: p.name, val: val, num: numVal };
+          })
+          .filter(p => p.num > 0) 
+          .map(p => `${p.name} ${p.val}`)
           .join(', ');
 
         const ppt2 = "Il numero complessivo degli iscritti è pari a " + get("iscritti") +
@@ -1056,7 +1074,7 @@
       
       const buttons = document.querySelectorAll('.btn');
       let importBtn;
-      buttons.forEach(b => { if(b.textContent.includes('Importa')) importBtn = b; });
+      buttons.forEach(b => { if(b.textContent.includes('Importa Excel')) importBtn = b; });
       
       const original = importBtn ? importBtn.innerHTML : "Importa";
       if(importBtn) {
@@ -1096,8 +1114,8 @@
             }, 1500);
           }
         } catch (error) {
-          console.error("Errore import:", error);
-          alert("Errore durante l'importazione del file.");
+          console.error("Errore import Excel:", error);
+          alert("Errore durante l'importazione del file Excel.");
           if(importBtn) {
             importBtn.innerHTML = original;
             importBtn.disabled = false;
@@ -1105,6 +1123,76 @@
         }
       };
       reader.readAsArrayBuffer(file);
+    }
+
+    // Importazione JSON
+    function importJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const buttons = document.querySelectorAll('.btn');
+      let importBtn;
+      buttons.forEach(b => { if(b.textContent.includes('Importa JSON')) importBtn = b; });
+
+      const original = importBtn ? importBtn.innerHTML : "Importa JSON";
+      if(importBtn) {
+         importBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Caricamento...";
+         importBtn.disabled = true;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const jsonData = JSON.parse(e.target.result);
+          
+          // CONFIGURAZIONE MAPPING: Chiave JSON -> ID Input HTML
+          const jsonMapping = {
+            "Numero Complessivo Iscritti": "iscritti",
+            "Iscritti Facebook": "facebook",
+            "Iscritti X (Twitter)": "twitter",
+            "Iscritti Linkedin": "linkedin",
+            "Iscritti Instagram": "instagram",
+            "Iscritti Whatsapp": "whatsapp",
+            "Iscritti YouTube": "youtube"
+          };
+
+          let count = 0;
+
+          // Itera su tutte le chiavi del JSON
+          for (const [key, value] of Object.entries(jsonData)) {
+            if (jsonMapping[key]) {
+               const targetId = jsonMapping[key];
+               const inputElement = document.getElementById(targetId);
+               
+               if (inputElement) {
+                 inputElement.value = value;
+                 count++;
+               }
+            }
+          }
+          
+          calcolaTotali();
+
+          if(importBtn) {
+            importBtn.innerHTML = "<i class='fas fa-check'></i> " + count + " Campi aggiornati!";
+            setTimeout(() => {
+                importBtn.innerHTML = original;
+                importBtn.disabled = false;
+            }, 2000);
+          }
+          
+          event.target.value = '';
+
+        } catch (error) {
+          console.error("Errore import JSON:", error);
+          alert("Errore durante la lettura del file JSON. Verifica il formato.");
+          if(importBtn) {
+            importBtn.innerHTML = original;
+            importBtn.disabled = false;
+          }
+        }
+      };
+      reader.readAsText(file);
     }
   </script>
 </body>
