@@ -262,14 +262,14 @@
       cursor: pointer;
     }
 
-    /* BOTTONI ACTION - MODIFICATI PER STARE SU UNA RIGA */
+    /* BOTTONI ACTION - STRETTI */
     .action-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px; /* Ridotto il gap da 15px */
+      gap: 10px;
       justify-content: center;
       margin: 40px 0;
-      padding: 20px; /* Ridotto il padding verticale */
+      padding: 20px;
       background: var(--white);
       border: 1px solid var(--border-color);
       border-radius: 4px;
@@ -280,15 +280,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px; /* Ridotto gap icona-testo */
-      padding: 10px 15px; /* PADDING RIDOTTO (era 12px 30px) */
-      font-size: 0.95rem; /* Font leggermente più piccolo */
+      gap: 8px;
+      padding: 10px 15px;
+      font-size: 0.95rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
-      min-width: 130px; /* MIN-WIDTH RIDOTTO (era 160px) */
+      min-width: 130px;
       border-radius: 2px;
     }
 
@@ -709,7 +709,7 @@
         </button>
         
         <input type="file" id="fileImport" class="file-input" onchange="importExcel(event)" accept=".xlsx, .xls" />
-        <input type="file" id="jsonImport" class="file-input" onchange="importJson(event)" accept=".json" />
+        <input type="file" id="jsonImport" class="file-input" onchange="importJson(event)" accept=".json" multiple />
       </div>
 
       <div class="preview-section" id="preview">
@@ -1125,10 +1125,11 @@
       reader.readAsArrayBuffer(file);
     }
 
-    // Importazione JSON
+    // Importazione JSON (MULTI-FILE)
     function importJson(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      // Usa .files per prendere tutti i file selezionati
+      const files = event.target.files;
+      if (files.length === 0) return;
 
       const buttons = document.querySelectorAll('.btn');
       let importBtn;
@@ -1140,59 +1141,84 @@
          importBtn.disabled = true;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const jsonData = JSON.parse(e.target.result);
-          
-          // CONFIGURAZIONE MAPPING: Chiave JSON -> ID Input HTML
-          const jsonMapping = {
-            "Numero Complessivo Iscritti": "iscritti",
-            "Iscritti Facebook": "facebook",
-            "Iscritti X (Twitter)": "twitter",
-            "Iscritti Linkedin": "linkedin",
-            "Iscritti Instagram": "instagram",
-            "Iscritti Whatsapp": "whatsapp",
-            "Iscritti YouTube": "youtube"
-          };
+      // Dizionario di Mappatura aggiornato
+      const jsonMapping = {
+        // --- SEZIONE ISCRITTI (ES1.json) ---
+        "Numero Complessivo Iscritti": "iscritti",
+        "Iscritti Facebook": "facebook",
+        "Iscritti X (Twitter)": "twitter",
+        "Iscritti Linkedin": "linkedin",
+        "Iscritti Instagram": "instagram",
+        "Iscritti Whatsapp": "whatsapp",
+        "Iscritti YouTube": "youtube",
+        
+        // --- SEZIONE POST E CONTENUTI (ES2.json) ---
+        "Numero post Facebook": "postFacebook",
+        "Numero post X (Twitter)": "tweet",
+        "Numero post Linkedin": "postLinkedin",
+        "Numero post Instagram": "postInstagram",
+        "Numero post Youtube": "videoYoutube",
+        "Numero post Whatsapp": "postWhatsapp",
+        
+        // Best Performer
+        "Argomenti più visualizzati 1": "titolo1",
+        "Visualizzazione Argomenti più visualizzati 1": "vis1",
+        "Argomenti più visualizzati 2": "titolo2",
+        "Visualizzazione Argomenti più visualizzati 2": "vis2",
+        "Argomenti più visualizzati 3": "titolo3",
+        "Visualizzazione Argomenti più visualizzati 3": "vis3",
+        
+        // Comunicazione Istituzionale
+        "Numero post istituzionali": "postIstituzionali",
+        "Visualizzazione post istituzionali": "viewsIstituzionali",
+        "Like + interazoni post istituzionali": "interazioniIstituzionali"
+      };
 
-          let count = 0;
+      let filesProcessed = 0;
+      let totalFieldsUpdated = 0;
 
-          // Itera su tutte le chiavi del JSON
-          for (const [key, value] of Object.entries(jsonData)) {
-            if (jsonMapping[key]) {
-               const targetId = jsonMapping[key];
-               const inputElement = document.getElementById(targetId);
-               
-               if (inputElement) {
-                 inputElement.value = value;
-                 count++;
-               }
+      // Cicla attraverso tutti i file selezionati
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          try {
+            const jsonData = JSON.parse(e.target.result);
+            
+            for (const [key, value] of Object.entries(jsonData)) {
+              if (jsonMapping[key]) {
+                 const targetId = jsonMapping[key];
+                 const inputElement = document.getElementById(targetId);
+                 
+                 if (inputElement) {
+                   inputElement.value = value;
+                   totalFieldsUpdated++;
+                 }
+              }
+            }
+          } catch (error) {
+            console.error(`Errore importazione file ${file.name}:`, error);
+          } finally {
+            filesProcessed++;
+            // Se abbiamo finito di leggere tutti i file
+            if (filesProcessed === files.length) {
+                calcolaTotali();
+                
+                if(importBtn) {
+                  importBtn.innerHTML = "<i class='fas fa-check'></i> " + totalFieldsUpdated + " Campi!";
+                  setTimeout(() => {
+                      importBtn.innerHTML = original;
+                      importBtn.disabled = false;
+                  }, 2000);
+                }
+                // Reset input
+                event.target.value = '';
             }
           }
-          
-          calcolaTotali();
-
-          if(importBtn) {
-            importBtn.innerHTML = "<i class='fas fa-check'></i> " + count + " Campi aggiornati!";
-            setTimeout(() => {
-                importBtn.innerHTML = original;
-                importBtn.disabled = false;
-            }, 2000);
-          }
-          
-          event.target.value = '';
-
-        } catch (error) {
-          console.error("Errore import JSON:", error);
-          alert("Errore durante la lettura del file JSON. Verifica il formato.");
-          if(importBtn) {
-            importBtn.innerHTML = original;
-            importBtn.disabled = false;
-          }
-        }
-      };
-      reader.readAsText(file);
+        };
+        
+        reader.readAsText(file);
+      });
     }
   </script>
 </body>
