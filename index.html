@@ -502,7 +502,7 @@
 
       <div class="form-section" id="section-content">
         <div class="section-header" onclick="toggleSection('section-content')">
-          <h2 class="section-title"><i class="fas fa-edit"></i> Contenuti Pubblicati</h2>
+          <h2 class="section-title"><i class="fas fa-edit"></i> Contenuti Pubblicati (Editoriali)</h2>
           <i class="fas fa-chevron-down accordion-icon"></i>
         </div>
         <div class="section-content">
@@ -516,24 +516,6 @@
               <input id="postEditoriali" type="text" class="calcolato" readonly />
             </div>
             
-            <div class="form-group">
-              <label for="postADV">Post Pubblicitari (ADV)</label>
-              <input id="postADV" type="text" placeholder="Inserisci numero" />
-            </div>
-            
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label>Seleziona Canali con attività ADV:</label>
-                <div class="checkbox-group" id="advChannelsContainer">
-                    <label class="checkbox-item"><input type="checkbox" value="Facebook" checked> Facebook</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Instagram" checked> Instagram</label>
-                    <label class="checkbox-item"><input type="checkbox" value="LinkedIn"> LinkedIn</label>
-                    <label class="checkbox-item"><input type="checkbox" value="X (Twitter)"> X</label>
-                    <label class="checkbox-item"><input type="checkbox" value="TikTok"> TikTok</label>
-                    <label class="checkbox-item"><input type="checkbox" value="YouTube"> YouTube</label>
-                    <label class="checkbox-item"><input type="checkbox" value="Whatsapp"> Whatsapp</label>
-                </div>
-            </div>
-
             <div class="form-group">
               <label for="postFacebook">Post Facebook</label>
               <input id="postFacebook" type="text" placeholder="Inserisci numero" />
@@ -633,10 +615,30 @@
         </div>
         <div class="section-content">
           <div class="form-grid">
+            
             <div class="form-group">
               <label for="campagneATL">Numero Campagne</label>
               <input id="campagneATL" type="text" placeholder="Inserisci numero" />
             </div>
+
+            <div class="form-group">
+              <label for="postADV">Post Pubblicitari (ADV)</label>
+              <input id="postADV" type="text" placeholder="Inserisci numero" />
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Seleziona Canali con attività ADV:</label>
+                <div class="checkbox-group" id="advChannelsContainer">
+                    <label class="checkbox-item"><input type="checkbox" value="Facebook" checked> Facebook</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Instagram" checked> Instagram</label>
+                    <label class="checkbox-item"><input type="checkbox" value="LinkedIn"> LinkedIn</label>
+                    <label class="checkbox-item"><input type="checkbox" value="X (Twitter)"> X</label>
+                    <label class="checkbox-item"><input type="checkbox" value="TikTok"> TikTok</label>
+                    <label class="checkbox-item"><input type="checkbox" value="YouTube"> YouTube</label>
+                    <label class="checkbox-item"><input type="checkbox" value="Whatsapp"> Whatsapp</label>
+                </div>
+            </div>
+
             <div class="form-group" style="grid-column: 1 / -1;">
               <label for="elencoCampagne">Elenco Campagne</label>
               <textarea id="elencoCampagne" rows="3" placeholder="Es. Campagna Inverno, Offerta Giovani..."></textarea>
@@ -747,6 +749,11 @@
   </div>
 
   <script>
+    // Calcolo data del mese precedente per il default
+    const today = new Date();
+    // Imposta al primo giorno del mese precedente per evitare bug con giorni come il 31
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
     // Inizializzazione di Flatpickr
     flatpickr("#mese", {
       plugins: [
@@ -756,7 +763,8 @@
           altFormat: "F Y"
         })
       ],
-      locale: "it"
+      locale: "it",
+      defaultDate: lastMonth // Imposta di default il mese precedente
     });
     
     document.addEventListener('DOMContentLoaded', function() {
