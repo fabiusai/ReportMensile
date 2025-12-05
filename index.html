@@ -888,7 +888,7 @@
                      get("clickATL") + " link click e " +
                      get("interazioniATL") + " interazioni.<br><br>" +
                      "Nel mese gli utenti hanno pubblicato " + get("commenti") +
-                     " commenti ai post. I commenti hanno riguardato, in prevalenza, i “" +
+                     " commenti ai post. I commenti hanno riguardato, in prevalenza, il tema “" +
                      get("argomentiFacebook") + "” (" +
                      get("prevalenzaCommenti") + ").";
 
@@ -1149,7 +1149,7 @@
          importBtn.disabled = true;
       }
 
-      // Dizionario di Mappatura aggiornato
+      // Dizionario di Mappatura aggiornato con ENGAGEMENT
       const jsonMapping = {
         // --- SEZIONE ISCRITTI (ES1.json) ---
         "Numero Complessivo Iscritti": "iscritti",
@@ -1179,7 +1179,13 @@
         // Comunicazione Istituzionale
         "Numero post istituzionali": "postIstituzionali",
         "Visualizzazione post istituzionali": "viewsIstituzionali",
-        "Like + interazoni post istituzionali": "interazioniIstituzionali"
+        "Like + interazoni post istituzionali": "interazioniIstituzionali",
+
+        // --- SEZIONE ENGAGEMENT (ES3.json) ---
+        "Totale commenti": "commenti",
+        "Variazione commenti rispetto al mese precedente": "tendenzaCommenti",
+        "Dettaglio Argomenti: Temi trattati Poste Italiane FB: l'argomento con più commenti": "argomentiFacebook",
+        "Dettaglio Argomenti: valore in percentuale commenti argomento Temi trattati Poste Italiane FB": "prevalenzaCommenti"
       };
 
       let filesProcessed = 0;
